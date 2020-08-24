@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-Created on Thu Apr 23 16:15:13 2020
+Created on Thu Ene 1 16:15:13 2020
 
-@author: Sebastian González Villegas
+@author: Equipo de Analitica XM
 """
 
 import requests
@@ -81,7 +81,7 @@ class ReadDB:
                 data_json = json.loads(self.connection.content)
                 print('a')
                 temporal_data = json_normalize(data_json['Items'], 'HourlyEntities', 'Date', sep='_')
-                # temporal_data = pd.json_normalize(data_json['Items'], 'HourlyEntities', 'Date', sep='_')
+                
                 if data is None:
                     data = temporal_data.copy()
                 else:
@@ -91,9 +91,7 @@ class ReadDB:
                 if end == end_date:
                     aux = False
                 condition = ((end - start_date).days > 30 | (end - end_date).days != 0) | aux
-        #            data.columns = ['ID'] + ['H0' + str(x) for x in range(1, 10)] + \
-        #                           ['H' + str(x) for x in range(10, 25)] + ['Fecha']
-        #            data['ID'] = self.inventario_metricas[coleccion][metrica][1]
+
         elif self.inventario_metricas[coleccion][metrica][3] == 'Diaria':
 
             end = end_date
@@ -157,7 +155,5 @@ class ReadDB:
 
 if __name__ == "__main__":
     consult = ReadDB()
-
-    #    print(consult.get_collections('AporEner'))
     df = consult.request_data("Gene", 2, dt.date(2020, 1, 10), dt.date(2020, 1, 11))
     print(df.head())
