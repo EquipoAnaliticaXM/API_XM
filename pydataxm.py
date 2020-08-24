@@ -32,11 +32,20 @@ class ReadDB:
             , 'PrecBolsNaci': [(0, 'Precio de Bolsa Nacional', 'Sistema', 'Horaria')]
             , 'MaxPrecOferNal': [(0, 'Máximo Precio de Oferta Nacional', 'Sistema', 'Horaria')]
             , 'RestAliv': [(0, 'Restricciones Aliviadas', 'Sistema', 'Horaria')]
-            , 'GeneIdea': [(0, 'Generacion Ideal', 'Sistema', 'Horaria')]
+            , 'GeneIdea': [(0, 'Generacion Ideal', 'Sistema', 'Horaria'),
+                           (1, 'Generacion Ideal', 'Recurso', 'Horaria')]
             , 'VoluUtilDiarEner': [(0, 'Volumen Util Diario', 'Sistema', 'Diaria')]
             , 'RemuRealIndiv': [(0, 'RRID', 'Sistema', 'Diaria')]
             , 'CapEfecNeta': [(0, 'Listado de recursos térmicos con su respectiva Capacidad Efectiva Neta por mes',
-                               'Sistema', 'Anual')]}
+                               'Sistema', 'Anual')]
+            ,'VentContEner':[(0,'Ventas en Contratos Energía','Sistema','Horaria'),
+                             (1,'Ventas en Contratos Energía por Agente','Agente','Horaria')]
+            ,'CompContEner':[(0,'Compras en Contrato Energía','Sistema','Horaria')
+                             ,(1,'Compras en Contrato Energía por Agente','Agente','Horaria')]
+            ,'CompBolsNaciEner':[(0,'Compras en Bolsa Nacional Energía','Sistema','Horaria')
+                                ,(1,'Compras en Bolsa Nacional Energía por Agente','Agente','Horaria')]
+            ,'PrecPromContRegu':[(0,'Precio Promedio Contratos Regulado','Sistema','Diaria')]
+            ,'PrecPromContNoRegu':[(0,'Precio Promedio Contratos No Regulado','Sistema','Diaria')]}
 
     def get_collections(self, coleccion):
 
@@ -114,7 +123,7 @@ class ReadDB:
                 if data is None:
                     data = temporal_data.copy()
                 else:
-                    data = data.append(temporal_data, ignore_ingoordex=True)
+                    data = data.append(temporal_data, ignore_index=True)
 
                 start_date = start_date + dt.timedelta(30)
                 if end == end_date:
@@ -155,5 +164,5 @@ class ReadDB:
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df = consult.request_data("Gene", 1, dt.date(2020, 1, 10), dt.date(2020, 1, 11))
+    df = consult.request_data("PrecPromContNoRegu", 0, dt.date(2015, 1, 1), dt.date(2015, 2, 28))
     print(df.head())
