@@ -50,7 +50,7 @@ A continuación, presentamos el listado de métricas disponibles y los parámetr
 | Remuneración Real Individual Diaria del Cargo por Confiabilidad– RRID          | $COP             | Diaria       | {"MetricId": "RemuRealIndiv","StartDate": "2020-01-01","EndDate": "2020-01-31","Entity":"Sistema"}       | http://servapibi.xm.com.co/daily  |
 
 ## Comentarios Finales
-Es importante tener en cuenta que el formato de fecha que recibe la API es YYYY-MM-DD
+Tener en cuenta que el formato de fecha que recibe la API es YYYY-MM-DD
  
 ## Restricciones de consulta:
 Con el fin de evitar saturar el servicio, se han establecido restricciones a las consultas así:
