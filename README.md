@@ -66,7 +66,7 @@ A continuación, presentamos el listado de métricas disponibles y los parámetr
 | Compras en Contrato Energía (Total SIN)                                        | kWh              | Horaria      | {"MetricId": "CompContEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}      | http://servapibi.xm.com.co/hourly |
 | Compras en Bolsa Nacional Energía por Agente                                   | kWh              | Horaria      | {"MetricId": "CompBolsNaciEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Agente"}   | http://servapibi.xm.com.co/hourly |
 | Compras en Bolsa Nacional Energía (Total SIN)                                  | kWh              | Horaria      | {"MetricId": "CompBolsNaciEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}  | http://servapibi.xm.com.co/hourly |
-## Comentarios Finales
+## Comentarios finales
 Tener en cuenta que el formato de fecha que recibe la API es YYYY-MM-DD
  
 ## Restricciones de consulta:
