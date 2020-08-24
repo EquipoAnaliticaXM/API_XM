@@ -155,5 +155,5 @@ class ReadDB:
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df = consult.request_data("Gene", 2, dt.date(2020, 1, 10), dt.date(2020, 1, 11))
+    df = consult.request_data("Gene", 1, dt.date(2020, 1, 10), dt.date(2020, 1, 11))
     print(df.head())
