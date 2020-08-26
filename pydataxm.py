@@ -165,4 +165,4 @@ class ReadDB:
 if __name__ == "__main__":
     consult = ReadDB()
     df = consult.request_data("PrecPromContNoRegu", 0, dt.date(2015, 1, 1), dt.date(2015, 2, 28))
-    print(df.head())
+    
