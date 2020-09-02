@@ -86,9 +86,9 @@ class ReadDB:
                                 'Entity': self.inventario_metricas[coleccion][metrica][2]}
 
                 self.connection = requests.post("http://servapibi.xm.com.co/hourly", json=self.request)
-                print(self.connection.encoding)
+                
                 data_json = json.loads(self.connection.content)
-                print('a')
+            
                 temporal_data = json_normalize(data_json['Items'], 'HourlyEntities', 'Date', sep='_')
                 
                 if data is None:
