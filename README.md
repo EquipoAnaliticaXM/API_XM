@@ -6,7 +6,6 @@ Este repositorio se crea con el fin de compartir herramientas de consulta para e
 A continuacion se listan las variables que se encuentran disponibles para su consulta:
 
 * Generación Real del SIN y por Recurso de Generación
-* Generación por tipo de Despacho / Tipo de Fuente
 * Demanda Comercial del SIN y por Agente Comercializador
 * Costo de las Restricciones que se trasladan a la demanda (Restricciones finales)
 * Precio de Bolsa Nacional
@@ -51,7 +50,6 @@ A continuación, presentamos el listado de métricas disponibles y los parámetr
 | Máximo Precio de Oferta Nacional                                               | $COP/kWh         | Horaria      | {"MetricId": "MaxPrecOferNal","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Sistema"}       | http://servapibi.xm.com.co/hourly |
 | Precio de Escasez de Activación                                                | $COP/kWh         | Diaria       | {"MetricId": "PrecEscaAct","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Sistema"}          | http://servapibi.xm.com.co/daily  |
 | Restricciones Aliviadas (Total SIN)                                            | $COP             | Horaria      | {"MetricId": "RestAliv","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Sistema"}             | http://servapibi.xm.com.co/hourly |
-| Generación por tipo de despacho y tipo de fuente                               | kWh              | Horaria      | {"MetricId": "Gene","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Renovabilidad"}           | http://servapibi.xm.com.co/hourly |
 | Listado de recursos térmicos con su respectiva Capacidad Efectiva Neta por mes | KW               | Mensual      | {"MetricId": "CapEfecNeta","StartDate": "2018-01-01","EndDate": "2018-12-31","Entity":"Sistema"}          | http://servapibi.xm.com.co/annual |
 | Generación Ideal                                                               | kWh              | Horaria      | {"MetricId": "GeneIdea","StartDate": "2018-01-01","EndDate": "2018-01-01","Entity":"Sistema"}             | http://servapibi.xm.com.co/hourly |
 | Volumen Útil en Energía                                                        | kWh              | Diaria       | {"MetricId": "VoluUtilDiarEner","StartDate": "2020-01-01","EndDate": "2020-01-31","Entity":"Sistema"}     | http://servapibi.xm.com.co/daily  |
