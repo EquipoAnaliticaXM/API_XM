@@ -33,7 +33,7 @@ Para consumir el servicio se presenta una aproximación propuesta por el equipo 
 
 |Lenguaje|Nombre de Script o Archivo|
 |--------|--------------------------|
-|Python| RequestDataAPI.py|
+|Python| pydataxm.py|
 |Excel (VBA) | Macro.xlsm|
 
 ## Lista de métricas disponibles y datos requeridos para su uso
