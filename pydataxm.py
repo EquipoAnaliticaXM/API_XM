@@ -164,5 +164,5 @@ class ReadDB:
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df = consult.request_data("PrecPromContNoRegu", 0, dt.date(2015, 1, 1), dt.date(2015, 2, 28))
-    df.to_excel('ResultadoAPI.xlsx', sheet_name='Hoja1')
+    df = consult.request_data("PrecBolsNaci", 0, dt.date(2020, 9, 1), dt.date(2020, 9, 22))
+
