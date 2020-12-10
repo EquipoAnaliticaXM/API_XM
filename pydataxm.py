@@ -20,8 +20,7 @@ class ReadDB:
         self.connection = None
         self.request = ''
         self.inventario_metricas = {'Gene': [(0, 'Generacion Real', 'Sistema', 'Horaria'),
-                                             (1, 'Generacion Real por Recurso', 'Recurso', 'Horaria'),
-                                             (2, 'Generacion por tipo de despacho', 'Renovabilidad', 'Horaria')]
+                                             (1, 'Generacion Real por Recurso', 'Recurso', 'Horaria')]
             , 'DemaCome': [(0, 'Demanda Comercial', 'Sistema', 'Horaria'),
                            (1, 'Demanda Comercial por Agente', 'Agente', 'Horaria')]
             , 'AporEner': [(0, 'Aportes Energia', 'Sistema', 'Diaria')]
@@ -37,7 +36,8 @@ class ReadDB:
             , 'VoluUtilDiarEner': [(0, 'Volumen Util Diario', 'Sistema', 'Diaria')]
             , 'RemuRealIndiv': [(0, 'RRID', 'Sistema', 'Diaria')]
             , 'CapEfecNeta': [(0, 'Listado de recursos térmicos con su respectiva Capacidad Efectiva Neta por mes',
-                               'Sistema', 'Anual')]
+                               'Sistema', 'Anual'),
+                            (1,'Listado Recursos Generación','Recurso','Diaria')]
             ,'VentContEner':[(0,'Ventas en Contratos Energía','Sistema','Horaria'),
                              (1,'Ventas en Contratos Energía por Agente','Agente','Horaria')]
             ,'CompContEner':[(0,'Compras en Contrato Energía','Sistema','Horaria')
@@ -45,8 +45,18 @@ class ReadDB:
             ,'CompBolsNaciEner':[(0,'Compras en Bolsa Nacional Energía','Sistema','Horaria')
                                 ,(1,'Compras en Bolsa Nacional Energía por Agente','Agente','Horaria')]
             ,'PrecPromContRegu':[(0,'Precio Promedio Contratos Regulado','Sistema','Diaria')]
-            ,'PrecPromContNoRegu':[(0,'Precio Promedio Contratos No Regulado','Sistema','Diaria')]}
+            ,'PrecPromContNoRegu':[(0,'Precio Promedio Contratos No Regulado','Sistema','Diaria')]
+            ,'ConsCombAprox':[(0,'Consumo Comb Aprox.','RecursoComb','Horaria')]
+           ,'EmisionesCO2':[(0,'Emisiones CO2','RecursoComb','Horaria')]
+           ,'EmisionesCH4':[(0,'Emisiones CH4','RecursoComb','Horaria')]
+           ,'EmisionesN2O':[(0,'Emisiones N2O','RecursoComb','Horaria')]
+           ,'EmisionesCO2Eq':[(0,'Emisiones CO2e','Recurso','Horaria')]
+           ,'factorEmisionCO2e':[(0,'factor emision CO2e','Sistema','Horaria')]
+           ,'ImpoEner':[(0,'Importaciones Energía','Sistema','Horaria')]
+          }
+    
 
+        
     def get_collections(self, coleccion):
 
         return self.inventario_metricas[coleccion]
@@ -85,7 +95,7 @@ class ReadDB:
                                 "EndDate": "{}".format(str(end)),
                                 'Entity': self.inventario_metricas[coleccion][metrica][2]}
 
-                self.connection = requests.post("http://servapibi.xm.com.co/hourly", json=self.request)
+                self.connection = requests.post(self.url, json=self.request)
                 
                 data_json = json.loads(self.connection.content)
             
@@ -100,7 +110,39 @@ class ReadDB:
                 if end == end_date:
                     aux = False
                 condition = ((end - start_date).days > 30 | (end - end_date).days != 0) | aux
+        elif self.inventario_metricas[coleccion][metrica][3] == 'Diaria' and coleccion == 'CapEfecNeta':
+            end = end_date
+            condition = True
+            aux = True
+            data = None
+            while condition:
+                if (start_date - end_date).days < 1:
+                    end = start_date + dt.timedelta(0)
+                if end > end_date:
+                    end = end_date
+                self.request = {"MetricId": coleccion,
+                                "StartDate": "{}".format(str(start_date)),
+                                "EndDate": "{}".format(str(end)),
+                                'Entity': self.inventario_metricas[coleccion][metrica][2]}
+                self.url=self.url.replace('hourly','daily')
+                self.connection = requests.post(self.url, json=self.request)
+                
+                data_json = json.loads(self.connection.content)
+            
+                temporal_data = json_normalize(data_json['Items'], 'DailyEntities', 'Date', sep='_')
+                
+                if data is None:
+                    data = temporal_data.copy()
+                else:
+                    data = data.append(temporal_data, ignore_index=True)
+                start_date = start_date + dt.timedelta(1)
 
+                if end == end_date:
+                    aux = False
+                condition = ((end - start_date).days > 1 | (end - end_date).days != 0) | aux
+            
+            
+            
         elif self.inventario_metricas[coleccion][metrica][3] == 'Diaria':
 
             end = end_date
@@ -117,7 +159,8 @@ class ReadDB:
                                 "StartDate": "{}".format(str(start_date)),
                                 "EndDate": "{}".format(str(end)),
                                 'Entity': self.inventario_metricas[coleccion][metrica][2]}
-                self.connection = requests.post("http://servapibi.xm.com.co/daily", json=self.request)
+                self.url=self.url.replace('hourly','daily')                
+                self.connection = requests.post(self.url, json=self.request)
                 data_json = json.loads(self.connection.content)
                 temporal_data = json_normalize(data_json['Items'], 'DailyEntities', 'Date', sep='_')
                 if data is None:
@@ -146,7 +189,8 @@ class ReadDB:
                                 "StartDate": "{}".format(str(start_date)),
                                 "EndDate": "{}".format(str(end)),
                                 'Entity': self.inventario_metricas[coleccion][metrica][2]}
-                self.connection = requests.post("http://servapibi.xm.com.co/annual", json=self.request)
+                self.url=self.url.replace('hourly','annual')
+                self.connection = requests.post(self.url, json=self.request)
                 data_json = json.loads(self.connection.content)
                 temporal_data = json_normalize(data_json['Items'], 'AnnualEntities', 'Code', sep='_')
                 if data is None:
@@ -164,5 +208,6 @@ class ReadDB:
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df = consult.request_data("PrecBolsNaci", 0, dt.date(2020, 9, 1), dt.date(2020, 9, 22))
-
+#    df = consult.request_data("Gene", 1, dt.date(2020, 9, 1), dt.date(2020, 9, 30))
+#    df=consult.probar_metrica("ImpoEner",0,dt.date(2020, 9, 1), dt.date(2020, 10, 3))
+    df1=consult.request_data("CapEfecNeta",1,dt.date(2020, 9, 1), dt.date(2020, 9, 3))
