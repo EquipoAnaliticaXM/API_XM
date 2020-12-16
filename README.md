@@ -9,10 +9,10 @@ A continuacion se listan las variables que se encuentran disponibles para su con
 * Volumen Útil Diario (Energía)
 * Aportes Diarios (Energía)
 * Aportes Diarios por Río (Energía)
-* Capacidad útil del SIN
-* Capacidad Útil por Embalse
-* Media Historica de Aportes del SIN
-* Media Historica de Aportes por Río
+* Capacidad útil del SIN (Energía)
+* Capacidad Útil por Embalse (Energía)
+* Media Historica de Aportes del SIN (Energía)
+* Media Historica de Aportes por Río (Energía)
 ### Demanda
 * Demanda Comercial Total
 * Demanda Comercial por Agente Comercializador
