@@ -23,7 +23,8 @@ class ReadDB:
                                              (1, 'Generacion Real por Recurso', 'Recurso', 'Horaria')]
             , 'DemaCome': [(0, 'Demanda Comercial', 'Sistema', 'Horaria'),
                            (1, 'Demanda Comercial por Agente', 'Agente', 'Horaria')]
-            , 'AporEner': [(0, 'Aportes Energia', 'Sistema', 'Diaria')]
+            , 'AporEner': [(0, 'Aportes Energia', 'Sistema', 'Diaria'),
+            ¿              (1, 'Aportes Energia por Rio', 'Rio', 'Diaria')]
             , 'PrecEscaAct': [(0, 'Precio de Escasez de Activacion', 'Sistema', 'Diaria')]
             , 'ConsCombustibleMBTU': [
                 (0, 'Consumo Combustible Recursos pertenecientes al Despacho Central', 'Recurso', 'Horaria')]
@@ -33,7 +34,7 @@ class ReadDB:
             , 'RestAliv': [(0, 'Restricciones Aliviadas', 'Sistema', 'Horaria')]
             , 'GeneIdea': [(0, 'Generacion Ideal', 'Sistema', 'Horaria'),
                            (1, 'Generacion Ideal', 'Recurso', 'Horaria')]
-            , 'VoluUtilDiarEner': [(0, 'Volumen Util Diario', 'Sistema', 'Diaria')]
+#            , 'VoluUtilDiarEner': [(0, 'Volumen Util Diario', 'Sistema', 'Diaria')]
             , 'RemuRealIndiv': [(0, 'RRID', 'Sistema', 'Diaria')]
             , 'CapEfecNeta': [(0, 'Listado de recursos térmicos con su respectiva Capacidad Efectiva Neta por mes',
                                'Sistema', 'Anual'),
@@ -53,6 +54,26 @@ class ReadDB:
            ,'EmisionesCO2Eq':[(0,'Emisiones CO2e','Recurso','Horaria')]
            ,'factorEmisionCO2e':[(0,'factor emision CO2e','Sistema','Horaria')]
            ,'ImpoEner':[(0,'Importaciones Energía','Sistema','Horaria')]
+           'DemaOR':[(0,'Demanda por OR','Agente','Horaria')]
+           ,'PerdidasEner':[(0,'Perdidas en Energía','Sistema','Horaria')]
+           ,'DemaSIN':[(0,'Demanda del SIN','Sistema','Diaria')]
+           ,'DemaNoAtenProg':[(0,'Demanda No Atendida Programada por Área','Area','Diaria'),
+                              (1,'Demanda No Atendida Programada por Subárea','Subarea','Diaria')]
+             ,'DemaNoAtenNoProg':[(0,'Demanda No Atendida No Programada por Área','Area','Diaria'),
+                              (1,'Demanda No Atendida No Programada por Subárea','Subarea','Diaria')]
+           , 'VoluUtilDiarEner': [(0, 'Volumen Util Diario', 'Sistema', 'Diaria')
+                                 ,(1, 'Volumen Util Diario por Embalse', 'Embalse', 'Diaria')]
+           , 'CapaUtilDiarEner': [(0, 'Capacidad Util Diario', 'Sistema', 'Diaria')
+                                 ,(1, 'Capacidad Util Diario por Embalse', 'Embalse', 'Diaria')]
+           , 'AporEnerMediHist': [(0, 'Media Historica Aportes', 'Sistema', 'Diaria')
+                                 ,(1, 'Media Historica Aportes por Rio', 'Rio', 'Diaria')]
+     
+           ,'GeneSeguridad':[(0,'Generación Seguridad','Recurso','Horaria')]
+           ,'GeneFueraMerito':[(0,'Generación Fuera de Merito','Recurso','Horaria')]
+           ,'ObligEnerFirme':[(0,'Obligaciones de Energía Firme','Recurso','Diaria')]
+           ,'FAZNI':[(0,'Recaudo FAZNI','Sistema','Diaria')]
+           ,'PRONE':[(0,'Recaudo PRONE','Sistema','Diaria')]
+           ,'FAER':[(0,'Recaudo FAER','Sistema','Diaria')]
           }
     
 
