@@ -7,6 +7,7 @@ A continuacion se listan las variables que se encuentran disponibles para su con
 
 ### Hidrología
 * Volumen Útil Diario (Energía)
+* Volumen Útil Diario por Embalse (Energía)
 * Aportes Diarios (Energía)
 * Aportes Diarios por Río (Energía)
 * Capacidad útil del SIN (Energía)
