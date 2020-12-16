@@ -1,22 +1,44 @@
-# API XM
-Este repositorio se crea con el fin de compartir herramientas de consulta para extraer información relevante del Mercado de Energía Mayorista colombiano
+# Conceptos generales de la API XM
+Este repositorio se crea con el fin de compartir herramientas de consulta para extraer información relevante del Mercado de Energía Mayorista colombiano, a partir de esta guía, el lector estará en capacidad de construir clientes que consuman el servicio utilizando la herramienta de su preferencia. Posteriormente, detallaremos dos aproximaciones utilizando VBA y Python
 
-## Variables disponibles
+## Variables disponibles para consumir en la API XM
 
-A continuacion se listan las variables que se encuentran disponibles para su consulta:
+A continuacion se listan las variables que se encuentran disponibles para su consulta, las cuales se encuentran clasificadas por tema:
 
-* Generación Real del SIN y por Recurso de Generación
-* Demanda Comercial del SIN y por Agente Comercializador
-* Costo de las Restricciones que se trasladan a la demanda (Restricciones finales)
-* Precio de Bolsa Nacional
-* Máximo Precio de Oferta
-* Precio de Escasez de Activación
-* Generación Ideal
-* Generación Ideal por Recurso
+### Hidrología
 * Volumen Útil Diario (Energía)
 * Aportes Diarios (Energía)
+* Aportes Diarios por Río (Energía)
+* Capacidad útil del SIN
+* Capacidad Útil por Embalse
+* Media Historica de Aportes del SIN
+* Media Historica de Aportes por Río
+### Demanda
+* Demanda Comercial Total
+* Demanda Comercial por Agente Comercializador
+* Demanda del SIN
+* Demanda por Operador de Red
+* Perdidas de Energía
+* Demanda No Atendida Programada por Área
+* Demanda No Atendida Programada por Subárea
+* Demanda No Atendida No Programada por Área
+* Demanda No Atendida No Programada por Subárea
+### Oferta y Generación
+* Generación Real Total 
+* Generación Real por Recurso (Planta de Generación)
+* Generación Ideal
+* Generación Ideal por Recurso (Planta de Generación)
+* Consumo de Combustible por Recurso (Planta de Generación)
+* Listado de Rcursos de generación con sus principales atributos (Agente Generador, Tipo, Capacidad Efectiva Neta, entre otros)
+* Generación de Seguridad por Recurso
+* Generación Fuera de Mérito por Recurso
+* Obligaciones de Energía Firme por Recurso
+### Transacciones y Precios
+* Costo de las Restricciones que se trasladan a la demanda (Restricciones finales)
+* Precio de Escasez de Activación
+* Precio de Bolsa Nacional
+* Máximo Precio de Oferta
 * Remuneración Real Individual Diaria del Cargo por Confiablidad (RRID)
-* Consumo de Combustible
 * Precio de Oferta del Despacho
 *  Precio Promedio Contratos Regulado
 * Precio Promedio Contratos No Regulado
@@ -26,10 +48,31 @@ A continuacion se listan las variables que se encuentran disponibles para su con
 * Compras en Contrato Energía (Total SIN)
 * Compras en Bolsa Nacional Energía por Agente
 * Compras en Bolsa Nacional Energía (Total SIN)
+* FAZNI Moneda
+* FAER Moneda
+* PRONE Moneda
+#### Intercambios Internacionales
+* Importaciones en Energía
+### Cálculo de emisiones de CO2
+* Emisiones de CO2
+* Emisiones de CH4
+* Emisiones de N2O
+* Emisiones de CO2eq
+* Consumo Combustible Aproximado para el Factor Emisión
+* Factor de Emisión de la Matriz Energética (CO2eq/kWh)
 
 
+## Restricciones de la API:
+Con el fin de evitar saturar el servicio, se han establecido restricciones a las consultas así:
+* Para datos horarios y diarios, máximo 30 días por llamado
+* Para datos anuales, máximo 366 días por llamado
+* Para el Listado de Recursos de Generación el limite es 1 día por llamado
+## Comentarios finales
+Tener en cuenta que el formato de fecha que recibe la API es YYYY-MM-DD
 
-Para consumir el servicio se presenta una aproximación propuesta por el equipo de Analítica de XM en los siguientes lenguajes:
+## Soluciones diseñadas (No requiere desarollar código)
+
+Tal como se indicó al inicio, el equipo de Analítica ha diseñado dos aproximaciones para consumir el servicio en los siguientes lenguajes:
 
 |Lenguaje|Nombre de Script o Archivo|
 |--------|--------------------------|
@@ -64,11 +107,6 @@ A continuación, presentamos el listado de métricas disponibles y los parámetr
 | Compras en Contrato Energía (Total SIN)                                        | kWh              | Horaria      | {"MetricId": "CompContEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}      | http://servapibi.xm.com.co/hourly |
 | Compras en Bolsa Nacional Energía por Agente                                   | kWh              | Horaria      | {"MetricId": "CompBolsNaciEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Agente"}   | http://servapibi.xm.com.co/hourly |
 | Compras en Bolsa Nacional Energía (Total SIN)                                  | kWh              | Horaria      | {"MetricId": "CompBolsNaciEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}  | http://servapibi.xm.com.co/hourly |
-## Comentarios finales
-Tener en cuenta que el formato de fecha que recibe la API es YYYY-MM-DD
+
  
-## Restricciones de consulta:
-Con el fin de evitar saturar el servicio, se han establecido restricciones a las consultas así:
-* Para datos horarios y diarios, máximo 30 días por llamado
-* Para datos anuales, máximo 366 días por llamado
 
