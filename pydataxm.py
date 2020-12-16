@@ -34,7 +34,8 @@ class ReadDB:
             , 'RestAliv': [(0, 'Restricciones Aliviadas', 'Sistema', 'Horaria')]
             , 'GeneIdea': [(0, 'Generacion Ideal', 'Sistema', 'Horaria'),
                            (1, 'Generacion Ideal', 'Recurso', 'Horaria')]
-#            , 'VoluUtilDiarEner': [(0, 'Volumen Util Diario', 'Sistema', 'Diaria')]
+            , 'VoluUtilDiarEner': [(0, 'Volumen Util Diario', 'Sistema', 'Diaria')
+                                 ,(1, 'Volumen Util Diario por Embalse', 'Embalse', 'Diaria')]
             , 'RemuRealIndiv': [(0, 'RRID', 'Sistema', 'Diaria')]
             , 'CapEfecNeta': [(0, 'Listado de recursos térmicos con su respectiva Capacidad Efectiva Neta por mes',
                                'Sistema', 'Anual'),
@@ -61,8 +62,7 @@ class ReadDB:
                               (1,'Demanda No Atendida Programada por Subárea','Subarea','Diaria')]
              ,'DemaNoAtenNoProg':[(0,'Demanda No Atendida No Programada por Área','Area','Diaria'),
                               (1,'Demanda No Atendida No Programada por Subárea','Subarea','Diaria')]
-           , 'VoluUtilDiarEner': [(0, 'Volumen Util Diario', 'Sistema', 'Diaria')
-                                 ,(1, 'Volumen Util Diario por Embalse', 'Embalse', 'Diaria')]
+           
            , 'CapaUtilDiarEner': [(0, 'Capacidad Util Diario', 'Sistema', 'Diaria')
                                  ,(1, 'Capacidad Util Diario por Embalse', 'Embalse', 'Diaria')]
            , 'AporEnerMediHist': [(0, 'Media Historica Aportes', 'Sistema', 'Diaria')
