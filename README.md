@@ -30,7 +30,7 @@ A continuacion se listan las variables que se encuentran disponibles para su con
 * Generación Ideal
 * Generación Ideal por Recurso (Planta de Generación)
 * Consumo de Combustible por Recurso (Planta de Generación)
-* Listado de Rcursos de generación con sus principales atributos (Agente Generador, Tipo, Capacidad Efectiva Neta, entre otros)
+* Listado de Recursos de generación con sus principales atributos (Agente Generador, Tipo, Capacidad Efectiva Neta, entre otros)
 * Generación de Seguridad por Recurso
 * Generación Fuera de Mérito por Recurso
 * Obligaciones de Energía Firme por Recurso
