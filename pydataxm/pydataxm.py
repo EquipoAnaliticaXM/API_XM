@@ -13,7 +13,7 @@ class ReadDB(object):
         self.url = "http://servapibi.xm.com.co/hourly"
         self.connection = None
         self.request = ''
-        lectura = requests.get(r'https://raw.githubusercontent.com/EquipoAnaliticaXM/API_XM/master/metricas.json').json()
+        lectura = requests.get(r'https://raw.githubusercontent.com/EquipoAnaliticaXM/API_XM/master/pydataxm/metricasAPI.json').json()
         self.inventario_metricas = json.loads(lectura)
         
     def get_collections(self, coleccion):
@@ -202,4 +202,4 @@ class ReadDB(object):
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df1 = consult.request_data("PRONE", 0, dt.date(2020, 7, 1), dt.date(2020, 7, 10))
+    df1 = consult.request_data("Gene", 0, dt.date(2020, 7, 1), dt.date(2020, 7, 10))
