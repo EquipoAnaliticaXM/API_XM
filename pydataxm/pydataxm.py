@@ -187,7 +187,7 @@ class ReadDB(object):
                 condition = ((end - start_date).days > 365 | (end - end_date).days != 0) | aux
 
 
-        elif self.inventario_metricas[coleccion][metrica][3] == 'Lista':
+        elif self.inventario_metricas[coleccion][metrica][3] == 'Lista' and not coleccion=='ListadoMetricas':
             self.request = {"MetricId": coleccion,
                                 # "StartDate": "{}".format(str(start_date)),
                                 # "EndDate": "{}".format(str(end)),
