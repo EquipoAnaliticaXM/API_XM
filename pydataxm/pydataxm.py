@@ -196,10 +196,19 @@ class ReadDB(object):
             self.connection = requests.post(self.url, json=self.request)
             data_json = json.loads(self.connection.content)
             data = pd.json_normalize(data_json['Items'], 'ListEntities','Date', sep='_')
-            
+        
+        elif self.inventario_metricas[coleccion][metrica][3] == 'Lista' and coleccion=='ListadoMetricas':
+            self.request = {"MetricId": coleccion,
+                    # "StartDate": "{}".format(str(start_date)),
+                    # "EndDate": "{}".format(str(end)),
+                    'Entity': self.inventario_metricas[coleccion][metrica][2]}
+            self.url = self.url.replace('hourly', 'lists')
+            self.connection = requests.post(self.url, json=self.request)
+            data_json = json.loads(self.connection.content)
+            data = pd.json_normalize(data_json['Items'], 'Values', sep='_')
         return data
 
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df1 = consult.request_data("Gene", 0, dt.date(2020, 7, 1), dt.date(2020, 7, 10))
+    df1 = consult.request_data("ListadoMetricas", 0, dt.date(2020, 7, 1), dt.date(2020, 7, 10))
