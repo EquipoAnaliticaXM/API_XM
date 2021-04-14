@@ -13,8 +13,8 @@ class ReadDB(object):
         self.url = "http://servapibi.xm.com.co/hourly"
         self.connection = None
         self.request = ''
-        lectura = requests.get(r'https://raw.githubusercontent.com/EquipoAnaliticaXM/API_XM/master/pydataxm/metricasAPI.json').json()
-        self.inventario_metricas = json.loads(lectura)
+        self.lectura = requests.get(r'https://raw.githubusercontent.com/EquipoAnaliticaXM/API_XM/master/pydataxm/metricasAPI.json').json()
+        self.inventario_metricas = json.loads(self.lectura)
         
     def get_collections(self, coleccion):
 
