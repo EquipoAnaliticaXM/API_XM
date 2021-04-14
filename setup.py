@@ -2,13 +2,13 @@ from distutils.core import setup
 setup(
   name = 'pydataxm',         # How you named your package folder (MyLib)
   packages = ['pydataxm'],   # Chose the same as "name"
-  version = '0.1.9',      # Start with a small number and increase it with every change you make
+  version = '0.2.0',      # Start with a small number and increase it with every change you make
   license='MIT',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
   description = 'Interface to play with the API XM',   # Give a short description about your library
   author = 'Equipo Analitica XM',                   # Type in your name
   author_email = 'analitica@xm.com.co',      # Type in your E-Mail
   url = 'https://github.com/EquipoAnaliticaXM/API_XM',   # Provide either the link to your github or to your website
-  download_url = 'https://github.com/EquipoAnaliticaXM/API_XM/archive/v_01.tar.gz',    # I explain this later on
+  download_url = 'https://raw.githubusercontent.com/EquipoAnaliticaXM/API_XM/master/pydataxm/pydataxm.py',    # I explain this later on
   keywords = ['API interpreter','Mercado Energía Mayorista', 'XM'],   # Keywords that define your package best
   install_requires=[            # I get to this in a second
           'requests', 'pandas','datetime'],
