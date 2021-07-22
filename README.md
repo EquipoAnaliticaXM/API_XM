@@ -96,8 +96,8 @@ A continuacion se listan las variables que se encuentran disponibles para su con
 
 Con este parámetro se permite extraer datos para una serie de entidades personalizada. Las métricas que pueden ser filtradas son todas aquellas que tienen cruces por:
 
-1. Agente (código bdMEM del agente _i.e_ CASC,EPMC,END, entre otros)
-2. Recurso (código bdMEM del recurso _i.e_ EPFV, TBST, JEP1, entre otros)
+1. Agente (código bdMEM del agente _i.e._ CASC, EPMC, ENDG, entre otros)
+2. Recurso (código bdMEM del recurso _i.e._ EPFV, TBST, JEP1, entre otros)
 3. Embalse
 4. Río
 
