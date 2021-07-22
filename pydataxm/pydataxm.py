@@ -224,10 +224,10 @@ class ReadDB(object):
         if 'Date' or 'date' in cols:
             data['Date'] = pd.to_datetime(data['Date'],errors='ignore')
         data.drop(columns=['Id'],inplace=True)
-        # data[cols] = data[cols].apply(pd.to_numeric(),error = 'ignore',axis=1)
+
         return data
 
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df1 = consult.request_data("Gene", 1, dt.date(2020, 1, 1), dt.date(2020, 1, 5),filtros=['TBST','TFL1'])
+    df1 = consult.request_data("ExpoEner", 0, dt.date(2020, 1, 1), dt.date(2020, 1, 5),filtros=[''])
