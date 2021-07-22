@@ -92,6 +92,17 @@ A continuacion se listan las variables que se encuentran disponibles para su con
 * Listado de agentes con atributos
 * Listado de métricas
 
+## Filtros (Parámetro Opcional)
+
+Con este parámetro se permite extraer datos para una serie de entidades personalizada. Las métricas que pueden ser filtradas son todas aquellas que tienen cruces por:
+
+1. Agente (código bdMEM del agente _i.e_ CASC,EPMC,END, entre otros)
+2. Recurso (código bdMEM del recurso _i.e_ EPFV, TBST, JEP1, entre otros)
+3. Embalse
+4. Río
+
+Para conocer el detalle de los bdMEM de cada recurso o agente le invitamos a consultar las métricas _ListadoRecursos_ y _ListadoAgentes_ disponibles en este mismo servicio.
+
 ## Restricciones de la API:
 Con el fin de evitar saturar el servicio, se han establecido restricciones a las consultas así:
 * Para datos horarios y diarios, máximo 30 días por llamado
