@@ -15,20 +15,26 @@ class ReadDB(object):
         self.request = ''
         self.lectura = requests.get(r'https://raw.githubusercontent.com/EquipoAnaliticaXM/API_XM/master/pydataxm/metricasAPI.json').json()
         self.inventario_metricas = json.loads(self.lectura)
-        
+    
     def get_collections(self, coleccion):
 
         return self.inventario_metricas[coleccion]
 
-    def request_data(self, coleccion, metrica, start_date, end_date):
+    def request_data(self, coleccion, metrica, start_date, end_date, filtros):
         """ request public server data from XM by the API
         Args:
             coleccion: one of the set of variables availables at self.get_collections()
-            metrica:one of this variables "DemaCome", "Gene", "GeneIdea", "PrecBolsNaci", "RestAliv"
-            start_date: start date consult data
-            end_date: end date consult data
+            metrica:one of this variables available in "ListadoMetricas", you have to enter MetricID
+            start_date: start date consult data using YYYY-MM-DD format
+            end_date: end date consult data using YYYY-MM-DD format
+            filter: optional parameter, list of values to filter data
         Returns: DataFrame with the raw Data
         """
+        if type(filtros)==list:
+            self.filtros = filtros
+        else:
+            print('Los filtros deben ingresarse como una lista de valores')
+            self.filtros = []
         if coleccion not in self.inventario_metricas.keys():
             print('No existe la colección {}'.format(coleccion))
             return pd.DataFrame()
@@ -37,7 +43,6 @@ class ReadDB(object):
             return pd.DataFrame()
 
         if self.inventario_metricas[coleccion][metrica][3] == 'Horaria':
-
             end = end_date
             condition = True
             aux = True
@@ -50,7 +55,8 @@ class ReadDB(object):
                 self.request = {"MetricId": coleccion,
                                 "StartDate": "{}".format(str(start_date)),
                                 "EndDate": "{}".format(str(end)),
-                                'Entity': self.inventario_metricas[coleccion][metrica][2]}
+                                'Entity': self.inventario_metricas[coleccion][metrica][2],
+                                "Filter": self.filtros}
 
                 self.connection = requests.post(self.url, json=self.request)
 
@@ -80,7 +86,8 @@ class ReadDB(object):
                 self.request = {"MetricId": coleccion,
                                 "StartDate": "{}".format(str(start_date)),
                                 "EndDate": "{}".format(str(end)),
-                                'Entity': self.inventario_metricas[coleccion][metrica][2]}
+                                'Entity': self.inventario_metricas[coleccion][metrica][2],
+                                "Filter": self.filtros}
                 self.url = self.url.replace('hourly', 'daily')
                 self.connection = requests.post(self.url, json=self.request)
 
@@ -111,7 +118,8 @@ class ReadDB(object):
                 self.request = {"MetricId": coleccion,
                                 "StartDate": "{}".format(str(start_date)),
                                 "EndDate": "{}".format(str(end)),
-                                'Entity': self.inventario_metricas[coleccion][metrica][2]}
+                                'Entity': self.inventario_metricas[coleccion][metrica][2],
+                                "Filter": self.filtros}
                 self.url = self.url.replace('hourly', 'daily')
                 self.connection = requests.post(self.url, json=self.request)
                 data_json = json.loads(self.connection.content)
@@ -141,7 +149,8 @@ class ReadDB(object):
                 self.request = {"MetricId": coleccion,
                                 "StartDate": "{}".format(str(start_date)),
                                 "EndDate": "{}".format(str(end)),
-                                'Entity': self.inventario_metricas[coleccion][metrica][2]}
+                                'Entity': self.inventario_metricas[coleccion][metrica][2],
+                                "Filter": self.filtros}
                 self.url = self.url.replace('hourly', 'monthly')
                 self.connection = requests.post(self.url, json=self.request)
                 data_json = json.loads(self.connection.content)
@@ -157,7 +166,7 @@ class ReadDB(object):
                 condition = ((end - start_date).days > 731 | (end - end_date).days != 0) | aux
 
         elif self.inventario_metricas[coleccion][metrica][3] == 'Anual':
-
+            
             end = end_date
             condition = True
             aux = True
@@ -171,7 +180,8 @@ class ReadDB(object):
                 self.request = {"MetricId": coleccion,
                                 "StartDate": "{}".format(str(start_date)),
                                 "EndDate": "{}".format(str(end)),
-                                'Entity': self.inventario_metricas[coleccion][metrica][2]}
+                                'Entity': self.inventario_metricas[coleccion][metrica][2],
+                                "Filter": self.filtros}
                 self.url = self.url.replace('hourly', 'annual')
                 self.connection = requests.post(self.url, json=self.request)
                 data_json = json.loads(self.connection.content)
@@ -206,9 +216,18 @@ class ReadDB(object):
             self.connection = requests.post(self.url, json=self.request)
             data_json = json.loads(self.connection.content)
             data = pd.json_normalize(data_json['Items'], 'Values', sep='_')
+        
+        
+        cols = data.columns
+        for col in cols:
+            data[col] = pd.to_numeric(data[col],errors='ignore')
+        if 'Date' or 'date' in cols:
+            data['Date'] = pd.to_datetime(data['Date'],errors='ignore')
+        data.drop(columns=['Id'],inplace=True)
+        # data[cols] = data[cols].apply(pd.to_numeric(),error = 'ignore',axis=1)
         return data
 
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df1 = consult.request_data("ListadoMetricas", 0, dt.date(2020, 7, 1), dt.date(2020, 7, 10))
+    df1 = consult.request_data("Gene", 1, dt.date(2020, 1, 1), dt.date(2020, 1, 5),filtros=['TBST','TFL1'])
