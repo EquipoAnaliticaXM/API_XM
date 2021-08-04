@@ -221,13 +221,14 @@ class ReadDB(object):
         cols = data.columns
         for col in cols:
             data[col] = pd.to_numeric(data[col],errors='ignore')
-        if 'Date' or 'date' in cols:
+        if ('Date' or 'date') in cols:
             data['Date'] = pd.to_datetime(data['Date'],errors='ignore')
-        data.drop(columns=['Id'],inplace=True)
+        
+        # data.drop(columns=['Id'],inplace=True)
 
         return data
 
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df1 = consult.request_data("ListadoRios", 0, dt.date(2020, 1, 1), dt.date(2020, 1, 5),filtros=[])
+    df1 = consult.request_data("ListadoMetricas", 0, dt.date(2020, 1, 1), dt.date(2020, 1, 5),filtros=[])
