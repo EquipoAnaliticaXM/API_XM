@@ -230,4 +230,4 @@ class ReadDB(object):
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df1 = consult.request_data("ExpoEner", 0, dt.date(2020, 1, 1), dt.date(2020, 1, 5),filtros=[''])
+    df1 = consult.request_data("ListadoRios", 0, dt.date(2020, 1, 1), dt.date(2020, 1, 5),filtros=[])
