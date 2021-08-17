@@ -231,7 +231,7 @@ class ReadDB(object):
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df1 = consult.request_data("ListadoRecursos", 0, dt.date(2020, 1, 1), dt.date(2020, 1, 5),filtros=[]).columns.tolist()
+    df1 = consult.request_data("PrecPromContNoRegu", 0, dt.date(2020, 1, 1), dt.date(2020, 1, 5),filtros=[])
 
 
     
