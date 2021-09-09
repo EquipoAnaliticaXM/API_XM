@@ -23,7 +23,7 @@ A continuación, se listan las variables que se encuentran disponibles para su c
 <details>
 <summary>Hidrología</summary>
 <ul>
-<li> Volumen Útil Diario (Energía) [kWh] </li>
+<li> Volumen Útil Diario (Energía) </li>
 <li> Volumen Útil Diario por Embalse (Energía) </li>
 <li> Aportes Diarios (Energía) </li>
 <li> Aportes Diarios por Río (Energía) </li>
@@ -165,6 +165,8 @@ Con este parámetro se permite extraer datos para una serie de entidades persona
 Para conocer el detalle de los códigos (bdMEM) de cada recurso o agente le invitamos a consultar las métricas _ListadoRecursos_ y _ListadoAgentes_ disponibles en este mismo servicio.
 
 Para conocer el detalle de los nombres de cada río o embalse le invitamos a consultar las métricas _ListadoRios_ y _ListadoEmbalse_ disponibles en este mismo servicio.
+
+En la carpeta _examples_ encontrará los ejemplos para consumir el servicio usando filtros. [Ir a ejemplos](https://github.com/EquipoAnaliticaXM/API_XM/tree/master/examples)
 
 <a id='section5'></a>
 ## Restricciones de la API:
