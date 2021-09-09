@@ -73,37 +73,7 @@ class ReadDB(object):
                 if end == end_date:
                     aux = False
                 condition = ((end - start_date).days > 30 | (end - end_date).days != 0) | aux
-        elif self.inventario_metricas[coleccion][metrica][3] == 'Diaria' and coleccion == 'CapEfecNeta':
-            end = end_date
-            condition = True
-            aux = True
-            data = None
-            while condition:
-                if (start_date - end_date).days < 1:
-                    end = start_date + dt.timedelta(0)
-                if end > end_date:
-                    end = end_date
-                self.request = {"MetricId": coleccion,
-                                "StartDate": "{}".format(str(start_date)),
-                                "EndDate": "{}".format(str(end)),
-                                'Entity': self.inventario_metricas[coleccion][metrica][2],
-                                "Filter": self.filtros}
-                self.url = self.url.replace('hourly', 'daily')
-                self.connection = requests.post(self.url, json=self.request)
 
-                data_json = json.loads(self.connection.content)
-
-                temporal_data = pd.json_normalize(data_json['Items'], 'DailyEntities', 'Date', sep='_')
-
-                if data is None:
-                    data = temporal_data.copy()
-                else:
-                    data = data.append(temporal_data, ignore_index=True)
-                start_date = start_date + dt.timedelta(1)
-
-                if end == end_date:
-                    aux = False
-                condition = ((end - start_date).days > 1 | (end - end_date).days != 0) | aux
         elif self.inventario_metricas[coleccion][metrica][3] == 'Diaria':
             end = end_date
             condition = True
@@ -197,42 +167,27 @@ class ReadDB(object):
                 condition = ((end - start_date).days > 365 | (end - end_date).days != 0) | aux
 
 
-        elif self.inventario_metricas[coleccion][metrica][3] == 'Lista' and not coleccion=='ListadoMetricas':
-            self.request = {"MetricId": coleccion,
-                                # "StartDate": "{}".format(str(start_date)),
-                                # "EndDate": "{}".format(str(end)),
-                                'Entity': self.inventario_metricas[coleccion][metrica][2]}
+        elif self.inventario_metricas[coleccion][metrica][3] == 'Lista':
+            self.request = {'MetricId': coleccion,
+                            'Entity': self.inventario_metricas[coleccion][metrica][2]}
             self.url = self.url.replace('hourly', 'lists')
             self.connection = requests.post(self.url, json=self.request)
             data_json = json.loads(self.connection.content)
             data = pd.json_normalize(data_json['Items'], 'ListEntities','Date', sep='_')
-        
-        elif self.inventario_metricas[coleccion][metrica][3] == 'Lista' and coleccion=='ListadoMetricas':
-            self.request = {"MetricId": coleccion,
-                    # "StartDate": "{}".format(str(start_date)),
-                    # "EndDate": "{}".format(str(end)),
-                    'Entity': self.inventario_metricas[coleccion][metrica][2]}
-            self.url = self.url.replace('hourly', 'lists')
-            self.connection = requests.post(self.url, json=self.request)
-            data_json = json.loads(self.connection.content)
-            data = pd.json_normalize(data_json['Items'], 'Values', sep='_')
-        
+    
         
         cols = data.columns
         for col in cols:
             data[col] = pd.to_numeric(data[col],errors='ignore')
         if ('Date' or 'date') in cols:
             data['Date'] = pd.to_datetime(data['Date'],errors='ignore')
-        
-        # data.drop(columns=['Id'],inplace=True)
-
         return data
 
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df1 = consult.request_data("PrecPromContNoRegu", 0, dt.date(2020, 1, 1), dt.date(2020, 1, 5),filtros=[])
-
+    df1 = consult.request_data("CapEfecNeta", 0, dt.date(2021, 8, 1), dt.date(2021, 8, 1),filtros=[])
+    
 
     
     
