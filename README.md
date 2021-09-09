@@ -1,3 +1,7 @@
+<p align="center"> 
+<img src="https://user-images.githubusercontent.com/69567089/132706213-e16d3bf5-3ecc-4571-9c3e-f388a81e78fe.png">
+</p>
+
 ## Índice
 1. [Conceptos generales de la API XM](#section1)
 2. [Variables disponibles para consumir en la API XM](#section2)
