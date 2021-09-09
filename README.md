@@ -23,7 +23,7 @@ A continuación, se listan las variables que se encuentran disponibles para su c
 <details>
 <summary>Hidrología</summary>
 <ul>
-<li> Volumen Útil Diario (Energía) </li>
+<li> Volumen Útil Diario (Energía) [kWh] </li>
 <li> Volumen Útil Diario por Embalse (Energía) </li>
 <li> Aportes Diarios (Energía) </li>
 <li> Aportes Diarios por Río (Energía) </li>
@@ -146,10 +146,10 @@ A continuación, se listan las variables que se encuentran disponibles para su c
 
 Tal como se indicó al inicio, el equipo de Analítica ha diseñado dos aproximaciones para consumir el servicio en los siguientes lenguajes:
 
-|Lenguaje|Nombre de Script o Archivo|Habilidad requerida|
-|--------|--------------------------|-------------------|
-|Python| <code> $ pip install pydataxm </code>|Low Code|
-|Excel (VBA) | Consulta_API_XM.xlsm|No Code|
+|Lenguaje|Nombre|Tipo|Instalación|Habilidad requerida|
+|--------|------|----|-----------|-------------------|
+|Python|pydataxm|Librería| <code> $ pip install pydataxm </code>|Low Code|
+|Excel (VBA) | Consulta_API_XM.xlsm|Macro|No Aplica|No Code|
 
 <a id='section4'></a>
 ## ¿Cómo realizar solicitudes filtrando por atributos específicos? _(Parámetro opcional)_
