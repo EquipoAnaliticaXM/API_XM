@@ -20,7 +20,7 @@ class ReadDB(object):
 
         return self.inventario_metricas[coleccion]
 
-    def request_data(self, coleccion, metrica, start_date, end_date, filtros):
+    def request_data(self, coleccion, metrica, start_date, end_date, filtros=None):
         """ request public server data from XM by the API
         Args:
             coleccion: one of the set of variables availables at self.get_collections()
@@ -32,9 +32,11 @@ class ReadDB(object):
         """
         if type(filtros)==list:
             self.filtros = filtros
+        elif filtros ==None:
+            self.filtros=[]
         else:
             print('Los filtros deben ingresarse como una lista de valores')
-            self.filtros = []
+            self.filtros = list
         if coleccion not in self.inventario_metricas.keys():
             print('No existe la colección {}'.format(coleccion))
             return pd.DataFrame()
@@ -186,7 +188,7 @@ class ReadDB(object):
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df1 = consult.request_data("CapEfecNeta", 0, dt.date(2021, 8, 1), dt.date(2021, 8, 1),filtros=[])
+    df1 = consult.request_data("GeneIdea", 1, dt.date(2021, 8, 1), dt.date(2021, 8, 1))
     
 
     
