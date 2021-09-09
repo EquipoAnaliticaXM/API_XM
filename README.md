@@ -1,127 +1,180 @@
-# Conceptos generales de la API XM
-Este repositorio se crea con el fin de compartir herramientas de consulta para extraer información relevante del Mercado de Energía Mayorista colombiano, a partir de esta guía, el lector estará en capacidad de construir clientes que consuman el servicio utilizando la herramienta de su preferencia. Posteriormente, detallaremos dos aproximaciones utilizando VBA y Python
+## Índice
+1. [Conceptos generales de la API XM](#section1)
+2. [Variables disponibles para consumir en la API XM](#section2)
+3. [Soluciones diseñadas para consumir la API](#section3)
+4. [Cómo realizar solicitudes filtrando por atributos específicos\?](#section4)
+5. [Restricciones de la API](#section5)
+6. [Comentarios finales](#section6)
+7. [Elementos necesarios para utilizar el servicio desde cualquier cliente](#section7)
 
+<a id='section1'></a>
+## Conceptos generales de la API XM
+Este repositorio se crea con el fin de compartir herramientas de consulta para extraer información relevante del Mercado de Energía Mayorista colombiano. A partir de esta guía, el lector estará en capacidad de construir clientes que consuman el servicio utilizando la herramienta de su preferencia. Posteriormente, detallaremos dos aproximaciones utilizando VBA y Python
+
+<a id='section2'></a>
 ## Variables disponibles para consumir en la API XM
 
 A continuacion se listan las variables que se encuentran disponibles para su consulta, las cuales se encuentran clasificadas por tema:
 
-### Hidrología
-* Volumen Útil Diario (Energía)
-* Volumen Útil Diario por Embalse (Energía)
-* Aportes Diarios (Energía)
-* Aportes Diarios por Río (Energía)
-* Capacidad útil del SIN (Energía)
-* Capacidad Útil por Embalse (Energía)
-* Media Historica de Aportes del SIN (Energía)
-* Media Historica de Aportes por Río (Energía)
-### Demanda
-* Demanda Comercial Total
-* Demanda Comercial por Agente Comercializador
-* Demanda del SIN
-* Demanda por Operador de Red
-* Perdidas de Energía
-* Demanda No Atendida Programada por Área
-* Demanda No Atendida Programada por Subárea
-* Demanda No Atendida No Programada por Área
-* Demanda No Atendida No Programada por Subárea
-* Demanda Comercial Regulada por Agente
-* Demanda Comercial No regulada por Agente
-* Demanda Comercial Regulada (Total SIN)
-* Demanda Comercial No Regulada (Total SIN)
-* Demanda Comercial No Regulada por CIIU
+<details>
+<summary>Hidrología</summary>
+<ul>
+<li> Volumen Útil Diario (Energía) </li>
+<li> Volumen Útil Diario por Embalse (Energía) </li>
+<li> Aportes Diarios (Energía) </li>
+<li> Aportes Diarios por Río (Energía) </li>
+<li> Capacidad útil del SIN (Energía) </li>
+<li> Capacidad Útil por Embalse (Energía) </li>
+<li> Media Historica de Aportes del SIN (Energía) </li>
+<li> Media Historica de Aportes por Río (Energía) </li>
+</ul>
+</details>
 
-### Oferta y Generación
-* Generación Real Total 
-* Generación Real por Recurso (Planta de Generación)
-* Generación Ideal
-* Generación Ideal por Recurso (Planta de Generación)
-* Consumo de Combustible por Recurso (Planta de Generación)
-* Listado de Recursos de generación con sus principales atributos (Agente Generador, Tipo, Capacidad Efectiva Neta, entre otros)
-* Generación de Seguridad por Recurso
-* Generación Fuera de Mérito por Recurso
-* Obligaciones de Energía Firme por Recurso
-* Generación Programada Despacho
-* Generación Programada Redespacho
-* Disponibilidad Real
-* Disponibilidad Comercial
-* Disponibilidad Declarada
-* Reconciliación Positiva Energía
-* Reconciliación Negativa Energía
-* Desviaciones Energía
-* Compras AGPE
+<details>
+<summary>Demanda</summary>
+<ul>
+<li> Demanda Comercial Total </li>
+<li> Demanda Comercial por Agente Comercializador </li>
+<li> Demanda del SIN </li>
+<li> Demanda por Operador de Red </li>
+<li> Perdidas de Energía </li>
+<li> Demanda No Atendida Programada por Área </li>
+<li> Demanda No Atendida Programada por Subárea </li>
+<li> Demanda No Atendida No Programada por Área </li>
+<li> Demanda No Atendida No Programada por Subárea </li>
+<li> Demanda Comercial Regulada por Agente </li>
+<li> Demanda Comercial No regulada por Agente </li>
+<li> Demanda Comercial Regulada (Total SIN) </li>
+<li> Demanda Comercial No Regulada (Total SIN) </li>
+<li> Demanda Comercial No Regulada por CIIU </li>
+</ul>
+</details>
 
-### Transacciones y Precios
-* Costo de las Restricciones que se trasladan a la demanda (Restricciones finales)
-* Precio de Escasez de Activación
-* Precio de Bolsa Nacional
-* Máximo Precio de Oferta
-* Remuneración Real Individual Diaria del Cargo por Confiablidad (RRID)
-* Precio de Oferta del Despacho
-* Precio Promedio Contratos Regulado
-* Precio Promedio Contratos No Regulado
-* Ventas en Contratos Energía por Agente
-* Ventas en Contratos Energía (Total SIN)
-* Compras en Contrato Energía por Agente
-* Compras en Contrato Energía (Total SIN)
-* Compras en Bolsa Nacional Energía por Agente
-* Compras en Bolsa Nacional Energía (Total SIN)
-* Responsabilidad Comercial AGC
-* Reconciliación Positiva Moneda
-* Reconciliación Negativa Moneda
-* Restricciones sin alivios
-* Restricciones aliviadas
-* Desviaciones Moneda
-* DDV Contratada
-* FAZNI Moneda
-* FAER Moneda
-* PRONE Moneda
-* MC
-#### Intercambios Internacionales
-* Importaciones en Energía
-* Exportaciones en Energia
-### Cálculo de emisiones de CO2
-* Emisiones de CO2
-* Emisiones de CH4
-* Emisiones de N2O
-* Emisiones de CO2eq
-* Consumo Combustible Aproximado para el Factor Emisión
-* Factor de Emisión de la Matriz Energética (CO2eq/kWh)
+<details>
+<summary>Oferta y Generación</summary>
+<ul>
+<li> Generación Real Total </li>
+<li> Generación Real por Recurso (Planta de Generación) </li>
+<li> Generación Ideal </li>
+<li> Generación Ideal por Recurso (Planta de Generación) </li>
+<li> Consumo de Combustible por Recurso (Planta de Generación) </li>
+<li> Listado de Recursos de generación con sus principales atributos (Agente Generador, Tipo, Capacidad Efectiva Neta, entre otros) </li>
+<li> Generación de Seguridad por Recurso </li>
+<li> Generación Fuera de Mérito por Recurso </li>
+<li> Obligaciones de Energía Firme por Recurso </li>
+<li> Generación Programada Despacho </li>
+<li> Generación Programada Redespacho </li>
+<li> Disponibilidad Real </li>
+<li> Disponibilidad Comercial </li>
+<li> Disponibilidad Declarada </li>
+<li> Reconciliación Positiva Energía </li>
+<li> Reconciliación Negativa Energía </li>
+<li> Desviaciones Energía </li>
+<li> Compras AGPE </li>
+</ul>
+</details>
 
-### Listados
-* Listado Recursos con atributos
-* Listado de agentes con atributos
-* Listado de métricas
+<details>
+<summary>Transacciones y Precios</summary>
+<ul>
+<li> Costo de las Restricciones que se trasladan a la demanda (Restricciones finales) </li>
+<li> Precio de Escasez de Activación </li>
+<li> Precio de Bolsa Nacional </li>
+<li> Máximo Precio de Oferta </li>
+<li> Remuneración Real Individual Diaria del Cargo por Confiablidad (RRID) </li>
+<li> Precio de Oferta del Despacho </li>
+<li> Precio Promedio Contratos Regulado </li>
+<li> Precio Promedio Contratos No Regulado </li>
+<li> Ventas en Contratos Energía por Agente </li>
+<li> Ventas en Contratos Energía (Total SIN) </li>
+<li> Compras en Contrato Energía por Agente </li>
+<li> Compras en Contrato Energía (Total SIN) </li>
+<li> Compras en Bolsa Nacional Energía por Agente </li>
+<li> Compras en Bolsa Nacional Energía (Total SIN) </li>
+<li> Responsabilidad Comercial AGC </li>
+<li> Reconciliación Positiva Moneda </li>
+<li> Reconciliación Negativa Moneda </li>
+<li> Restricciones sin alivios </li>
+<li> Restricciones aliviadas </li>
+<li> Desviaciones Moneda </li>
+<li> DDV Contratada </li>
+<li> FAZNI Moneda </li>
+<li> FAER Moneda </li>
+<li> PRONE Moneda </li>
+<li> MC </li> 
+</ul>
+</details>
 
-## Filtros (Parámetro Opcional)
+<details>
+<summary>Intercambios Internacionales</summary>
+<ul>
+<li> Importaciones en Energía </li>
+<li> Exportaciones en Energia </li> 
+</ul>
+</details>
+
+
+<details>
+<summary>Cálculo de emisiones de CO<sub>2</sub></summary>
+<ul>
+<li> Emisiones de CO<sub>2</sub> </li>
+<li> Emisiones de CH<sub>4</sub> </li>
+<li> Emisiones de N<sub>2</sub>O </li>
+<li> Emisiones de CO<sub>2</sub>eq </li>
+<li> Consumo Combustible Aproximado para el Factor Emisión </li>
+<li> Factor de Emisión de la Matriz Energética (CO<sub>2</sub>eq/kWh) </li> 
+</ul>
+</details>
+
+<details>
+<summary>Listados</summary>
+<ul>
+<li> Listado Recursos con atributos </li>
+<li> Listado de agentes con atributos </li>
+<li> Listado de métricas </li>
+<li> Listado de ríos </li>
+<li> Listado de embalses </li>
+</ul>
+</details>
+
+<a id='section3'></a>
+## Soluciones diseñadas para consumir la API
+
+Tal como se indicó al inicio, el equipo de Analítica ha diseñado dos aproximaciones para consumir el servicio en los siguientes lenguajes:
+
+|Lenguaje|Nombre de Script o Archivo|Habilidad requerida|
+|--------|--------------------------|-------------------|
+|Python| pydataxm.py|Low Code|
+|Excel (VBA) | Macro.xlsm|No Code|
+
+<a id='section4'></a>
+## ¿Cómo realizar solicitudes filtrando por atributos específicos? _(Parámetro opcional)_
+En caso de no ser especificado dentro de la solicitud, el servicio retornará todos los registros disponibles. 
 
 Con este parámetro se permite extraer datos para una serie de entidades personalizada. Las métricas que pueden ser filtradas son todas aquellas que tienen cruces por:
 
 1. Agente (código bdMEM del agente _i.e._ CASC, EPMC, ENDG, entre otros)
 2. Recurso (código bdMEM del recurso _i.e._ EPFV, TBST, JEP1, entre otros)
-3. Embalse
-4. Río
+3. Embalse (nombre del embalse _i.e._ EL QUIMBO, GUAVIO, PENOL, entre otros)
+4. Río (nombre del río _i.e._ FLORIDA II, BOGOTA N.R., DESV. MANSO, entre otros)
 
-Para conocer el detalle de los bdMEM de cada recurso o agente le invitamos a consultar las métricas _ListadoRecursos_ y _ListadoAgentes_ disponibles en este mismo servicio.
+Para conocer el detalle de los códigos (bdMEM) de cada recurso o agente le invitamos a consultar las métricas _ListadoRecursos_ y _ListadoAgentes_ disponibles en este mismo servicio.
 
+Para concer el detalle de los nombres de cada río o embalse le invitamos a consultar las métricas _ListadoRios_ y _ListadoEmbalse_ disponibles en este mismo servicio.
+
+<a id='section5'></a>
 ## Restricciones de la API:
-Con el fin de evitar saturar el servicio, se han establecido restricciones a las consultas así:
+Con el fin de no congestionar el servicio, se han establecido restricciones a las consultas así:
 * Para datos horarios y diarios, máximo 30 días por llamado
 * Para datos mensuales, máximo 731 días por llamado
 * Para datos anuales, máximo 366 días por llamado
-* Para el Listado de Recursos de Generación el limite es 1 día por llamado
+
+<a id='section6'></a>
 ## Comentarios finales
 Tener en cuenta que el formato de fecha que recibe la API es YYYY-MM-DD
 
-## Soluciones diseñadas (No requiere desarollar código)
-
-Tal como se indicó al inicio, el equipo de Analítica ha diseñado dos aproximaciones para consumir el servicio en los siguientes lenguajes:
-
-|Lenguaje|Nombre de Script o Archivo|
-|--------|--------------------------|
-|Python| pydataxm.py|
-|Excel (VBA) | Macro.xlsm|
-
-## Lista de métricas disponibles y datos requeridos para su uso
+<a id='section7'></a>
+## Elementos necesarios para utilizar el servicio desde cualquier cliente
 A continuación, presentamos el listado de métricas disponibles y los parámetros requeridos para realizar peticiones de información.
 | Nombre de variable                                                    | Unidad de medida | Granularidad | Parámetros                                                                                                | URL                                |
 |-----------------------------------------------------------------------|------------------|--------------|-----------------------------------------------------------------------------------------------------------|------------------------------------|
