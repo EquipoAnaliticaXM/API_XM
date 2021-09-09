@@ -14,7 +14,7 @@ Este repositorio se crea con el fin de compartir herramientas de consulta para e
 <a id='section2'></a>
 ## Variables disponibles para consumir en la API XM
 
-A continuacion se listan las variables que se encuentran disponibles para su consulta, las cuales se encuentran clasificadas por tema:
+A continuación, se listan las variables que se encuentran disponibles para su consulta, las cuales se encuentran clasificadas por tema:
 
 <details>
 <summary>Hidrología</summary>
@@ -25,8 +25,8 @@ A continuacion se listan las variables que se encuentran disponibles para su con
 <li> Aportes Diarios por Río (Energía) </li>
 <li> Capacidad útil del SIN (Energía) </li>
 <li> Capacidad Útil por Embalse (Energía) </li>
-<li> Media Historica de Aportes del SIN (Energía) </li>
-<li> Media Historica de Aportes por Río (Energía) </li>
+<li> Media Histórica de Aportes del SIN (Energía) </li>
+<li> Media Histórica de Aportes por Río (Energía) </li>
 </ul>
 </details>
 
@@ -109,7 +109,7 @@ A continuacion se listan las variables que se encuentran disponibles para su con
 <summary>Intercambios Internacionales</summary>
 <ul>
 <li> Importaciones en Energía </li>
-<li> Exportaciones en Energia </li> 
+<li> Exportaciones en Energía </li> 
 </ul>
 </details>
 
@@ -144,8 +144,8 @@ Tal como se indicó al inicio, el equipo de Analítica ha diseñado dos aproxima
 
 |Lenguaje|Nombre de Script o Archivo|Habilidad requerida|
 |--------|--------------------------|-------------------|
-|Python| pydataxm.py|Low Code|
-|Excel (VBA) | Macro.xlsm|No Code|
+|Python| <code> $ pip install pydataxm </code>|Low Code|
+|Excel (VBA) | Consulta_API_XM.xlsm|No Code|
 
 <a id='section4'></a>
 ## ¿Cómo realizar solicitudes filtrando por atributos específicos? _(Parámetro opcional)_
@@ -160,7 +160,7 @@ Con este parámetro se permite extraer datos para una serie de entidades persona
 
 Para conocer el detalle de los códigos (bdMEM) de cada recurso o agente le invitamos a consultar las métricas _ListadoRecursos_ y _ListadoAgentes_ disponibles en este mismo servicio.
 
-Para concer el detalle de los nombres de cada río o embalse le invitamos a consultar las métricas _ListadoRios_ y _ListadoEmbalse_ disponibles en este mismo servicio.
+Para conocer el detalle de los nombres de cada río o embalse le invitamos a consultar las métricas _ListadoRios_ y _ListadoEmbalse_ disponibles en este mismo servicio.
 
 <a id='section5'></a>
 ## Restricciones de la API:
