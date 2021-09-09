@@ -153,8 +153,8 @@ En caso de no ser especificado dentro de la solicitud, el servicio retornará to
 
 Con este parámetro se permite extraer datos para una serie de entidades personalizada. Las métricas que pueden ser filtradas son todas aquellas que tienen cruces por:
 
-1. Agente (código bdMEM del agente _i.e._ CASC, EPMC, ENDG, entre otros)
-2. Recurso (código bdMEM del recurso _i.e._ EPFV, TBST, JEP1, entre otros)
+1. Agente (código SIC del agente _i.e._ CASC, EPMC, ENDG, entre otros)
+2. Recurso (código SIC del recurso _i.e._ EPFV, TBST, JEP1, entre otros)
 3. Embalse (nombre del embalse _i.e._ EL QUIMBO, GUAVIO, PENOL, entre otros)
 4. Río (nombre del río _i.e._ FLORIDA II, BOGOTA N.R., DESV. MANSO, entre otros)
 
