@@ -6,7 +6,10 @@ import datetime as dt
 
 
 class ReadDB(object):
-
+    
+    def __new__(cls):
+        return super(ReadDB, cls).__new__(cls)
+    
     def __init__(self):
         """This object was created to extract data from API XM"""
 
@@ -188,8 +191,8 @@ class ReadDB(object):
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df1 = consult.request_data("GeneIdea", 1, dt.date(2021, 8, 1), dt.date(2021, 8, 1))
-    
+    df1 = consult.request_data("RestAliv", 0, dt.date(2021, 7, 10), dt.date(2021, 8, 26))
+
 
     
     
