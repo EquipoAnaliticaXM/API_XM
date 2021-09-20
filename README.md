@@ -13,7 +13,9 @@
 
 <a id='section1'></a>
 ## Conceptos generales de la API XM
-Este repositorio se crea con el fin de compartir herramientas de consulta para extraer información relevante del Mercado de Energía Mayorista colombiano. A partir de esta guía, el lector estará en capacidad de construir clientes que consuman el servicio utilizando la herramienta de su preferencia. Posteriormente, detallaremos dos aproximaciones utilizando VBA y Python
+Este repositorio se crea con el fin de compartir herramientas de consulta para extraer información relevante del Mercado de Energía Mayorista colombiano usando la API XM. A partir de esta guía, el lector estará en capacidad de construir clientes que consuman el servicio utilizando la herramienta de su preferencia. Posteriormente, detallaremos dos aproximaciones utilizando VBA y Python.
+
+**Para utilizar la API XM no se requiere gestionar ningún usuario o clave**
 
 <a id='section2'></a>
 ## Variables disponibles para consumir en la API XM
