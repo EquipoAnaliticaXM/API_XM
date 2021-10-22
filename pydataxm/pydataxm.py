@@ -12,8 +12,8 @@ class ReadDB(object):
     
     def __init__(self):
         """This object was created to extract data from API XM"""
-
-        self.url = "http://servapibi.xm.com.co/hourly"
+        
+        self.url = "http://servapibi.xm.com.co/{period_base}"
         self.connection = None
         self.request = ''
         self.lectura = requests.get(r'https://raw.githubusercontent.com/EquipoAnaliticaXM/API_XM/master/pydataxm/metricasAPI.json').json()
@@ -52,6 +52,8 @@ class ReadDB(object):
             condition = True
             aux = True
             data = None
+            period_base = 'hourly'
+            self.url = f'http://servapibi.xm.com.co/{period_base}'
             while condition:
                 if (start_date - end_date).days < 30:
                     end = start_date + dt.timedelta(29)
@@ -84,6 +86,8 @@ class ReadDB(object):
             condition = True
             aux = True
             data = None
+            period_base = 'daily'
+            self.url = f'http://servapibi.xm.com.co/{period_base}'
             while condition:
                 if (start_date - end_date).days < 30:
                     end = start_date + dt.timedelta(29)
@@ -95,7 +99,6 @@ class ReadDB(object):
                                 "EndDate": "{}".format(str(end)),
                                 'Entity': self.inventario_metricas[coleccion][metrica][2],
                                 "Filter": self.filtros}
-                self.url = self.url.replace('hourly', 'daily')
                 self.connection = requests.post(self.url, json=self.request)
                 data_json = json.loads(self.connection.content)
                 temporal_data = pd.json_normalize(data_json['Items'], 'DailyEntities', 'Date', sep='_')
@@ -115,6 +118,8 @@ class ReadDB(object):
             condition = True
             aux = True
             data = None
+            period_base = 'monthly'
+            self.url = f'http://servapibi.xm.com.co/{period_base}'
             while condition:
                 if (start_date - end_date).days < 732:
                     end = start_date + dt.timedelta(731)
@@ -126,10 +131,9 @@ class ReadDB(object):
                                 "EndDate": "{}".format(str(end)),
                                 'Entity': self.inventario_metricas[coleccion][metrica][2],
                                 "Filter": self.filtros}
-                self.url = self.url.replace('hourly', 'monthly')
                 self.connection = requests.post(self.url, json=self.request)
                 data_json = json.loads(self.connection.content)
-                temporal_data = pd.json_normalize(data_json['Items'], 'MonthlyEntities', sep='_')
+                temporal_data = pd.json_normalize(data_json['Items'], 'MonthlyEntities','Date', sep='_')
                 if data is None:
                     data = temporal_data.copy()
                 else:
@@ -146,6 +150,8 @@ class ReadDB(object):
             condition = True
             aux = True
             data = None
+            period_base = 'annual'
+            self.url = f'http://servapibi.xm.com.co/{period_base}'
             while condition:
                 if (start_date - end_date).days < 366:
                     end = start_date + dt.timedelta(365)
@@ -157,7 +163,6 @@ class ReadDB(object):
                                 "EndDate": "{}".format(str(end)),
                                 'Entity': self.inventario_metricas[coleccion][metrica][2],
                                 "Filter": self.filtros}
-                self.url = self.url.replace('hourly', 'annual')
                 self.connection = requests.post(self.url, json=self.request)
                 data_json = json.loads(self.connection.content)
                 temporal_data = pd.json_normalize(data_json['Items'], 'AnnualEntities', 'Code', sep='_')
@@ -185,13 +190,13 @@ class ReadDB(object):
         for col in cols:
             data[col] = pd.to_numeric(data[col],errors='ignore')
         if ('Date' or 'date') in cols:
-            data['Date'] = pd.to_datetime(data['Date'],errors='ignore')
+            data['Date'] = pd.to_datetime(data['Date'],errors='ignore', format= '%Y-%m-%d')
         return data
 
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df1 = consult.request_data("RestAliv", 0, dt.date(2021, 7, 10), dt.date(2021, 8, 26))
+    df1 = consult.request_data("AporEner", 0, dt.date(2021, 1, 1), dt.date(2021, 3, 1))
 
 
     
