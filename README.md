@@ -53,6 +53,10 @@ A continuación, se listan las variables que se encuentran disponibles para su c
 <li> Demanda Comercial Regulada (Total SIN) </li>
 <li> Demanda Comercial No Regulada (Total SIN) </li>
 <li> Demanda Comercial No Regulada por CIIU </li>
+<li> Demanda Máxima Potencia</li>
+<li> Demanda Energía Escenario UPME Alto</li>
+<li> Demanda Energía Escenario UPME Medio</li>
+<li> Demanda Energía Escenario UPME Bajo</li>
 </ul>
 </details>
 
@@ -107,7 +111,36 @@ A continuación, se listan las variables que se encuentran disponibles para su c
 <li> FAZNI Moneda </li>
 <li> FAER Moneda </li>
 <li> PRONE Moneda </li>
-<li> MC </li> 
+<li> MC </li>
+<li> Compras Contratos Energía  Mercado Regulado</li>
+<li> Compras Contratos Energía  No Mercado Regulado</li>
+<li> Rentas de congestión para cubrir restricciones</li>
+<li> Saldo Neto TIE Mérito</li>
+<li> Saldo Neto TIE Fuera de Mérito</li>
+<li> Compras Contratos Energía  Mercado Regulado por Agente</li>
+<li> Compras Contratos Energía  No Mercado Regulado por Agente</li>
+<li> Precio de Bolsa Nacional TX1</li>
+<li> CERE</li>
+<li> CEE</li>
+<li> Ejecución Garantías</li>
+<li> Compras Contratos de Respaldo</li>
+<li> Compras Contratos de Respaldo por Recurso</li>
+<li> Ventas Contratos de Respaldo</li>
+<li> Ventas Contratos de Respaldo por Recurso</li>
+<li> Cargos por Uso STN</li>
+<li> Cargos por Uso STR</li>
+<li> Precio liquidado del Cargo por Confiabilidad</li>
+<li> Cargo Máximo T Prima</li>
+<li> Cargo Mínimo T Prima</li>
+<li> Cargo Media T Prima</li>
+<li> Compras Bolsa TIE Moneda Sistema</li>
+<li> Compras Bolsa Internacional Moneda Sistema</li>
+<li> Compras Bolsa TIE Moneda Agente</li>
+<li> Compras Bolsa Internacional Moneda Agente</li>
+<li> Ventas Bolsa TIE Moneda Sistema</li>
+<li> Ventas Bolsa Internacional Moneda Sistema</li>
+<li> Ventas Bolsa TIE Moneda Agente</li>
+<li> Ventas Bolsa Internacional Moneda Agente</li> 
 </ul>
 </details>
 
