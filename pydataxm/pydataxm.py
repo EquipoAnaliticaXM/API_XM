@@ -178,9 +178,11 @@ class ReadDB(object):
 
 
         elif self.inventario_metricas[coleccion][metrica][3] == 'Lista':
+            period_base = 'lists'
+            self.url = f'http://servapibi.xm.com.co/{period_base}'
             self.request = {'MetricId': coleccion,
                             'Entity': self.inventario_metricas[coleccion][metrica][2]}
-            self.url = self.url.replace('hourly', 'lists')
+  
             self.connection = requests.post(self.url, json=self.request)
             data_json = json.loads(self.connection.content)
             data = pd.json_normalize(data_json['Items'], 'ListEntities','Date', sep='_')
@@ -196,7 +198,7 @@ class ReadDB(object):
 
 if __name__ == "__main__":
     consult = ReadDB()
-    df1 = consult.request_data("RespComerAGC", 0, dt.date(2021, 1, 1), dt.date(2021, 1, 5))
+    df1 = consult.request_data("Gene", 0, dt.date(2021, 1, 1), dt.date(2021, 1, 5))
 
 
     
