@@ -2,8 +2,8 @@ from distutils.core import setup
 setup(
   name = 'pydataxm',         # How you named your package folder (MyLib)
   packages = ['pydataxm'],   # Chose the same as "name"
-  version = '0.2.4',      # Start with a small number and increase it with every change you make
-  license='MIT',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
+  version = '0.3.0',      # Start with a small number and increase it with every change you make
+  license='MIT',        # Choose a license from here: https://help.github.com/articles/licensing-a-repository
   description = 'Interface to play with the API XM',   # Give a short description about your library
   author = 'Equipo Analitica XM',                   # Type in your name
   author_email = 'analitica@xm.com.co',      # Type in your E-Mail
