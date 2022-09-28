@@ -21,7 +21,7 @@ class ReadDB(object):
     
     def __init__(self):
         """This object was created to extract data from API XM"""   
-        self.url = "http://servapibi.xm.com.co/{period_base}"
+        self.url = "https://servapibi.xm.com.co/{period_base}"
         self.connection = None
         self.request = ''
         self.inventario_metricas = self.all_variables()
@@ -35,7 +35,7 @@ class ReadDB(object):
             Data Frame with all variables available into the API XM 
         """
         request = {"MetricId": 'ListadoMetricas'}
-        connection = requests.post(f'http://servapibi.xm.com.co/Lists', json=request)
+        connection = requests.post(f'https://servapibi.xm.com.co/Lists', json=request)
         data_json = json.loads(connection.content)
         df_variables = pd.json_normalize(data_json['Items'], 'ListEntities', 'Date', sep='_')
         df_variables.drop(columns=['Id', 'Date'], inplace=True)
@@ -92,7 +92,7 @@ class ReadDB(object):
             aux = True
             data = None
             period_base = 'hourly'
-            self.url = f'http://servapibi.xm.com.co/{period_base}'
+            self.url = f'https://servapibi.xm.com.co/{period_base}'
             while condition:
                 if (start_date - end_date).days < 30:
                     end = start_date + dt.timedelta(29)
@@ -126,7 +126,7 @@ class ReadDB(object):
             aux = True
             data = None
             period_base = 'daily'
-            self.url = f'http://servapibi.xm.com.co/{period_base}'
+            self.url = f'https://servapibi.xm.com.co/{period_base}'
             while condition:
                 if (start_date - end_date).days < 30:
                     end = start_date + dt.timedelta(29)
@@ -158,7 +158,7 @@ class ReadDB(object):
             aux = True
             data = None
             period_base = 'monthly'
-            self.url = f'http://servapibi.xm.com.co/{period_base}'
+            self.url = f'https://servapibi.xm.com.co/{period_base}'
             while condition:
                 if (start_date - end_date).days < 732:
                     end = start_date + dt.timedelta(731)
@@ -190,7 +190,7 @@ class ReadDB(object):
             aux = True
             data = None
             period_base = 'annual'
-            self.url = f'http://servapibi.xm.com.co/{period_base}'
+            self.url = f'https://servapibi.xm.com.co/{period_base}'
             while condition:
                 if (start_date - end_date).days < 366:
                     end = start_date + dt.timedelta(365)
@@ -218,7 +218,7 @@ class ReadDB(object):
 
         elif self.inventario_metricas.query("MetricId == '{}' and Entity == '{}'".format(coleccion, metrica)).Type.values == 'ListsEntities':
             period_base = 'lists'
-            self.url = f'http://servapibi.xm.com.co/{period_base}'
+            self.url = f'https://servapibi.xm.com.co/{period_base}'
             self.request = {'MetricId': coleccion,
                             'Entity': metrica}
   
