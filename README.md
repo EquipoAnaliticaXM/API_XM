@@ -248,7 +248,7 @@ Body:
 Para conocer el inventario total de variables, cruces y filtros opcionales, consultar:
 
 ```
-https://servapibi.xm.com.co/lists
+http://servapibi.xm.com.co/lists
 
 Body:
 {"MetricId": "ListadoMetricas"}
