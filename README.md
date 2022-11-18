@@ -225,13 +225,13 @@ A continuación, presentamos el listado de métricas disponibles y los parámetr
 * www.servapibi.xm.com.co/monthly
 * www.servapibi.xm.com.co/lists
 3. Body petición:
-
+```
 {"MetricId": _"MetricID"_,
 "StartDate": _"YYYY-MM-DD"_,
 "EndDate":_"YYYY-MM-DD"_,
 "Entity": _"Cruce"_,
 "Filter":[_"Listado de codigos"_]}
-
+```
 **Nota:** El parámetro _Filter_ es opcional y solo aplica para variables diferente al cruce por _Sistema_
 ## Ejemplo para realizar una petición
 
