@@ -216,115 +216,40 @@ Tener en cuenta que el formato de fecha que recibe la API es YYYY-MM-DD
 
 <a id='section7'></a>
 ## Elementos necesarios para utilizar el servicio desde cualquier cliente
-A continuación, presentamos el listado de métricas disponibles y los parámetros requeridos para realizar peticiones de información.
-| Nombre de variable                                                    | Unidad de medida | Granularidad | Parámetros                                                                                                | URL                                |
-|-----------------------------------------------------------------------|------------------|--------------|-----------------------------------------------------------------------------------------------------------|------------------------------------|
-| Consumo Combustible Recursos pertenecientes al Despacho Central       | MBTU             | Horaria      | {"MetricId": "ConsCombustibleMBTU","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Recurso"}  | http://servapibi.xm.com.co/hourly  |
-| Generación Real por recurso                                           | kWh              | Horaria      | {"MetricId": "Gene","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Recurso"}                 | http://servapibi.xm.com.co/hourly  |
-| Generación Real (Total SIN)                                           | kWh              | Horaria      | {"MetricId": "Gene","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Sistema"}                 | http://servapibi.xm.com.co/hourly  |
-| Demanda Comercial por Agente                                          | kWh              | Horaria      | {"MetricId": "DemaCome","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Agente"}              | http://servapibi.xm.com.co/hourly  |
-| Demanda Comercial (Total SIN)                                         | kWh              | Horaria      | {"MetricId": "DemaCome","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Sistema"}             | http://servapibi.xm.com.co/hourly  |
-| Precio de Oferta del Despacho                                         | $COP/kWh         | Horaria      | {"MetricId": "PrecOferDesp","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Recurso"}         | http://servapibi.xm.com.co/hourly  |
-| Precio de Bolsa Nacional                                              | $COP/kWh         | Horaria      | {"MetricId": "PrecBolsNaci","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Sistema"}         | http://servapibi.xm.com.co/hourly  |
-| Máximo Precio de Oferta Nacional                                      | $COP/kWh         | Horaria      | {"MetricId": "MaxPrecOferNal","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Sistema"}       | http://servapibi.xm.com.co/hourly  |
-| Precio de Escasez de Activación                                       | $COP/kWh         | Diaria       | {"MetricId": "PrecEscaAct","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Sistema"}          | http://servapibi.xm.com.co/daily   |
-| Restricciones Aliviadas (Total SIN)                                   | $COP             | Horaria      | {"MetricId": "RestAliv","StartDate": "2018-01-01","EndDate": "2018-01-02","Entity":"Sistema"}             | http://servapibi.xm.com.co/hourly  |
-| Generación Ideal                                                      | kWh              | Horaria      | {"MetricId": "GeneIdea","StartDate": "2018-01-01","EndDate": "2018-01-01","Entity":"Sistema"}             | http://servapibi.xm.com.co/hourly  |
-| Volumen Útil en Energía                                               | kWh              | Diaria       | {"MetricId": "VoluUtilDiarEner","StartDate": "2020-01-01","EndDate": "2020-01-31","Entity":"Sistema"}     | http://servapibi.xm.com.co/daily   |
-| Volumen Útil en Energía por Embalse                                   | kWh              | Diaria       | {"MetricId": "VoluUtilDiarEner","StartDate": "2020-01-01","EndDate": "2020-01-31","Entity":"Embalse"}     | http://servapibi.xm.com.co/daily   |
-| Aportes Energía                                                       | kWh              | Diaria       | {"MetricId": "AporEner","StartDate": "2019-01-01","EndDate": "2019-01-31","Entity":"Sistema"}             | http://servapibi.xm.com.co/daily   |
-| Aportes Energía por Rio                                               | kWh              | Diaria       | {"MetricId": "AporEner","StartDate": "2019-01-01","EndDate": "2019-01-31","Entity":"Rio"}                 | http://servapibi.xm.com.co/daily   |
-| Capacidad Útil                                                        | kWh              | Diaria       | {"MetricId": "CapaUtilDiarEner","StartDate": "2020-01-01","EndDate": "2020-01-31","Entity":"Sistema"}     | http://servapibi.xm.com.co/daily   |
-| Capacidad Útil por Embalse                                            | kWh              | Diaria       | {"MetricId": "CapaUtilDiarEner","StartDate": "2020-01-01","EndDate": "2020-01-31","Entity":"Embalse"}     | http://servapibi.xm.com.co/daily   |
-| Media Histórica de Aportes                                            | kWh              | Diaria       | {"MetricId": "AporEnerMediHist","StartDate": "2019-01-01","EndDate": "2019-01-31","Entity":"Sistema"}     | http://servapibi.xm.com.co/daily   |
-| Media Histórica de Aportes por Río                                    | kWh              | Diaria       | {"MetricId": "AporEnerMediHist","StartDate": "2019-01-01","EndDate": "2019-01-31","Entity":"Rio"}         | http://servapibi.xm.com.co/daily   |
-| Remuneración Real Individual Diaria del Cargo por Confiabilidad– RRID | $COP             | Diaria       | {"MetricId": "RemuRealIndiv","StartDate": "2020-01-01","EndDate": "2020-01-31","Entity":"Sistema"}        | http://servapibi.xm.com.co/daily   |
-| Generación Ideal por Recurso                                          | kWh              | Horaria      | {"MetricId": "GeneIdea", "StartDate": "2015-01-01", "EndDate": "2015-01-31", "Entity" : "Recurso"}        | http://servapibi.xm.com.co/hourly  |
-| Precio Promedio Contratos Regulado                                    | $COP/kWh         | Horaria       | {"MetricId": "PrecPromContRegu", "StartDate": "2015-01-01",EndDate": "2015-01-31","Entity" : "Sistema"}   | http://servapibi.xm.com.co/hourly   |
-| Precio Promedio Contratos No Regulado                                 | $COP/kWh         | Horaria       | {"MetricId": "PrecPromContNoRegu", "StartDate": "2015-01-01",EndDate": "2015-01-31","Entity" : "Sistema"} | http://servapibi.xm.com.co/hourly   |
-| Ventas en Contratos Energía por Agente                                | kWh              | Horaria      | {"MetricId": "VentContEner","StartDate": "2015-01-01","EndDate": "2015-01-31","Entity" : "Agente"}        | http://servapibi.xm.com.co/hourly  |
-| Ventas en Contratos Energía (Total SIN)                               | kWh              | Horaria      | {"MetricId": "VentContEner","StartDate": "2015-01-01","EndDate": "2015-01-31","Entity" : "Sistema"}       | http://servapibi.xm.com.co/hourly  |
-| Compras en Contrato Energía por Agente                                | kWh              | Horaria      | {"MetricId": "CompContEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Agente"}       | http://servapibi.xm.com.co/hourly  |
-| Compras en Contrato Energía (Total SIN)                               | kWh              | Horaria      | {"MetricId": "CompContEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}      | http://servapibi.xm.com.co/hourly  |
-| Compras en Bolsa Nacional Energía por Agente                          | kWh              | Horaria      | {"MetricId": "CompBolsNaciEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Agente"}   | http://servapibi.xm.com.co/hourly  |
-| Compras en Bolsa Nacional Energía (Total SIN)                         | kWh              | Horaria      | {"MetricId": "CompBolsNaciEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}  | http://servapibi.xm.com.co/hourly  |
-| Consumo Combustible Aproximado para Factor de Emisión                 | MBTU             | Horaria      | {"MetricId": "ConsCombAprox","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "RecursoComb"} | http://servapibi.xm.com.co/hourly  |
-| Emisiones CO2                                                         | Toneladas        | Horaria      | {"MetricId": "EmisionesCO2","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "RecursoComb"}  | http://servapibi.xm.com.co/hourly  |
-| Emisiones CH4                                                         | Toneladas        | Horaria      | {"MetricId": "EmisionesCH4","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "RecursoComb"}  | http://servapibi.xm.com.co/hourly  |
-| Emisiones N2O                                                         | Toneladas        | Horaria      | {"MetricId": "EmisionesN2O","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "RecursoComb"}  | http://servapibi.xm.com.co/hourly  |
-| Emisiones CO2e                                                        | Toneladas        | Horaria      | {"MetricId": "EmisionesCO2Eq","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}    | http://servapibi.xm.com.co/hourly  |
-| Factor Emision SIN                                                    | g/kWh            | Horaria      | {"MetricId": "factorEmisionCO2e","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"} | http://servapibi.xm.com.co/hourly  |
-| Importaciones Energía                                                 | kWh              | Horaria      | {"MetricId": "ImpoEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}          | http://servapibi.xm.com.co/hourly  |
-| Demanda por OR                                                        | kWh              | Horaria      | {"MetricId": "DemaOR","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Agente"}             | http://servapibi.xm.com.co/hourly  |
-| Perdidas de Energía                                                   | kWh              | Horaria      | {"MetricId": "PerdidasEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}      | http://servapibi.xm.com.co/hourly  |
-| Demanda del SIN                                                       | kWh              | Diaria       | {"MetricId": "DemaSIN","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}           | http://servapibi.xm.com.co/daily   |
-| Demanda No Atendida Programada por Area                               | kWh              | Diaria       | {"MetricId": "DemaNoAtenProg","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Area"}       | http://servapibi.xm.com.co/daily   |
-| Demanda No Atendida Programada por Subarea                            | kWh              | Diaria       | {"MetricId": "DemaNoAtenProg","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Subarea"}    | http://servapibi.xm.com.co/daily   |
-| Demanda No Atendida No Programada por Area                            | kWh              | Diaria       | {"MetricId": "DemaNoAtenNoProg","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Area"}     | http://servapibi.xm.com.co/daily   |
-| Demanda No Atendida No Programada por Subarea                         | kWh              | Diaria       | {"MetricId": "DemaNoAtenNoProg","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Subarea"}  | http://servapibi.xm.com.co/daily   |
-| Generación de Seguridad por Recurso                                   | kWh              | Horaria      | {"MetricId": "GeneFueraMerito","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}   | http://servapibi.xm.com.co/hourly  |
-| Generación Fuera de Mérito por Recurso                                | kWh              | Horaria      | {"MetricId": "PerdidasEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}      | http://servapibi.xm.com.co/hourly  |
-| Obligaciones de Energía Firme por Recurso                             | kWh              | Diaria      | {"MetricId": "ObligEnerFirme","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}    | http://servapibi.xm.com.co/daily  |
-| FAZNI                                                                 | kWh              | Diaria       | {"MetricId": "FAZNI","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}             | http://servapibi.xm.com.co/daily   |
-| FAER                                                                  | kWh              | Mensual      | {"MetricId": "FAER","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}              | http://servapibi.xm.com.co/monthly |
-| PRONE                                                                 | kWh              | Mensual      | {"MetricId": "PRONE","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}             | http://servapibi.xm.com.co/monthly |
-| Exportaciones Energia                                                 | kWh              | Horaria      | {"MetricId": "ExpoEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}          | http://servapibi.xm.com.co/hourly  |
-| Generación Programada Despacho                                        | kWh              | Horaria      | {"MetricId": "GeneProgDesp","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}      | http://servapibi.xm.com.co/hourly  |
-| Generación Programada Redespacho                                      | kWh              | Horaria      | {"MetricId": "GeneProgRedesp","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}     | http://servapibi.xm.com.co/hourly  |
-| Disponibilidad Real                                                   | kWh              | Horaria      | {"MetricId": "DispoReal","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}         | http://servapibi.xm.com.co/hourly  |
-| Disponibilidad Comercial                                              | kWh              | Horaria      | {"MetricId": "DispoCome","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}         | http://servapibi.xm.com.co/hourly  |
-| Disponibilidad Declarada                                              | kWh              | Horaria      | {"MetricId": "DispoDeclarada","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}    | http://servapibi.xm.com.co/hourly  |
-| DDV Contratada                                                      | kWh              | Diaria       | {"MetricId": "DDVContratada","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}     | http://servapibi.xm.com.co/daily   |
-| Reconciliación Positiva Energía                                       | kWh              | Horaria      | {"MetricId": "RecoPosEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}       | http://servapibi.xm.com.co/hourly  |
-| Reconciliación Negativa Energía                                       | kWh              | Horaria      | {"MetricId": "RecoNegEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}       | http://servapibi.xm.com.co/hourly  |
-| Responsabilidad Comercial AGC                                         | $COP             | Horaria      | {"MetricId": "RespComerAGC","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}       | http://servapibi.xm.com.co/hourly  |
-| Desviaciones Energía                                                  | kWh              | Horaria      | {"MetricId": "DesvEner","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}          | http://servapibi.xm.com.co/hourly  |
-| Desviaciones Moneda                                                   | $COP             | Horaria      | {"MetricId": "DesvMoneda","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}        | http://servapibi.xm.com.co/hourly  |
-| Reconciliación Positiva Moneda                                        | $COP             | Horaria      | {"MetricId": "RecoPosMoneda","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}     | http://servapibi.xm.com.co/hourly  |
-| Reconciliación Negativa Moneda                                        | $COP             | Horaria      | {"MetricId": "RecoNegMoneda","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Recurso"}     | http://servapibi.xm.com.co/hourly  |
-| Compras AGPE                                                          | kWh              | Horaria      | {"MetricId": "ExcedenteAGPE","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Agente"}      | http://servapibi.xm.com.co/hourly  |
-| MC                                                                    | $COP/kWh         | Mensual      | {"MetricId": "MC","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}                | http://servapibi.xm.com.co/monthly |
-| Demanda Comercial Regulada por Agente                                 | kWh              | Horaria      | {"MetricId": "DemaComeReg","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}       | http://servapibi.xm.com.co/hourly  |
-| Demanda Comercial No regulada por Agente                              | kWh              | Horaria      | {"MetricId": "DemaComeNoReg","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Agente"}      | http://servapibi.xm.com.co/hourly  |
-| Demanda Comercial Regulada (Total SIN)                                | kWh              | Horaria      | {"MetricId": "DemaComeReg","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}        | http://servapibi.xm.com.co/hourly  |
-| Demanda Comercial No Regulada (Total SIN)                             | kWh              | Horaria      | {"MetricId": "DemaComeNoReg","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}     | http://servapibi.xm.com.co/hourly  |
-| Restricciones sin alivios                                             | $COP             | Horaria      | {"MetricId": "RestSinAliv","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "Sistema"}       | http://servapibi.xm.com.co/hourly  |
-| Demanda Comercial No Regulada por CIIU                                | kWh              | Horaria      | {"MetricId": "DemaComeNoReg","StartDate": "2015-01-01", "EndDate": "2015-01-31","Entity" : "CIIU"}        | http://servapibi.xm.com.co/hourly  |
-| Listado Recursos con atributos                                        | NA               | Lista        | {"MetricId": "ListadoRecursos","Entity" : "Sistema"}                                                      | http://servapibi.xm.com.co/lists   |
-| Listado de agentes con atributos                                      | NA               | Lista        | {"MetricId": "ListadoAgentes" ,"Entity" : "Sistema"}                                                      | http://servapibi.xm.com.co/lists   |
-| Listado de ríos                                                       | NA               | Lista        | {"MetricId": "ListadoRios" ,"Entity" : "Sistema"}                                                          | http://servapibi.xm.com.co/lists   |
-| Listado de embalses                                                   | NA               | Lista        | {"MetricId": "ListadoEmbalses" ,"Entity" : "Sistema"}                                                      | http://servapibi.xm.com.co/lists   |
-| Listado de métricas                                                   | NA               | Lista        | {"MetricId": "ListadoMetricas" ,"Entity" : "Sistema"}                                                      | http://servapibi.xm.com.co/lists   |
-| Compras Contratos Energía  Mercado Regulado               | kWh      | Horaria | {"MetricId": "CompContEnerReg","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}    | http://servapibi.xm.com.co/hourly  |
-| Compras Contratos Energía  No Mercado Regulado            | kWh      | Horaria | {"MetricId": "CompContEnerNoReg","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}  | http://servapibi.xm.com.co/hourly  |
-| Rentas de congestión para cubrir restricciones            | $COP     | Horaria | {"MetricId": "RentasCongestRestr","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"} | http://servapibi.xm.com.co/hourly  |
-| Saldo Neto TIE Mérito                                     | $COP     | Horaria | {"MetricId": "SnTIEMerito","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}        | http://servapibi.xm.com.co/hourly  |
-| Saldo Neto TIE Fuera de Mérito                            | $COP     | Horaria | {"MetricId": "SnTIEFueraMerito","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}   | http://servapibi.xm.com.co/hourly  |
-| Compras Contratos Energía  Mercado Regulado por Agente    | kWh      | Horaria | {"MetricId": "CompContEnerReg","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Agente"}     | http://servapibi.xm.com.co/hourly  |
-| Compras Contratos Energía  No Mercado Regulado por Agente | kWh      | Horaria | {"MetricId": "CompContEnerNoReg","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Agente"}   | http://servapibi.xm.com.co/hourly  |
-| Precio de Bolsa Nacional TX1                              | $COP/kWh | Horaria | {"MetricId": "PrecBolsNaciTX1","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}    | http://servapibi.xm.com.co/hourly  |
-| CERE                                                      | $COP/kWh | Mensual | {"MetricId": "CERE","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}               | http://servapibi.xm.com.co/monthly |
-| CEE                                                       | $COP/kWh | Mensual | {"MetricId": "CEE","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}                | http://servapibi.xm.com.co/monthly |
-| Demanda Máxima Potencia                                   | kW       | Diaria  | {"MetricId": "DemaMaxPot","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}         | http://servapibi.xm.com.co/daily   |
-| Ejecución Garantías                                       | $COP     | Horaria | {"MetricId": "EjecGarantRestr","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}    | http://servapibi.xm.com.co/hourly  |
-| Compras Contratos de Respaldo                             | kWh      | Diaria  | {"MetricId": "ComContRespEner","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}    | http://servapibi.xm.com.co/daily   |
-| Compras Contratos de Respaldo por Recurso                 | kWh      | Diaria  | {"MetricId": "ComContRespEner","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Recurso"}    | http://servapibi.xm.com.co/daily   |
-| Ventas Contratos de Respaldo                              | kWh      | Diaria  | {"MetricId": "VentContRespEner","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}   | http://servapibi.xm.com.co/daily   |
-| Ventas Contratos de Respaldo por Recurso                  | kWh      | Diaria  | {"MetricId": "VentContRespEner","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Recurso"}   | http://servapibi.xm.com.co/daily   |
-| Cargos por Uso STN                                        | $COP     | Mensual | {"MetricId": "CargoUsoSTN","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}        | http://servapibi.xm.com.co/monthly |
-| Cargos por Uso STR                                        | $COP     | Mensual | {"MetricId": "CargoUsoSTR","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}        | http://servapibi.xm.com.co/monthly |
-| Precio liquidado del Cargo por Confiabilidad              | $USD/kWh | Diaria  | {"MetricId": "PrecCargConf","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Recurso"}       | http://servapibi.xm.com.co/daily   |
-| Cargo Máximo T Prima                                      | $COP/kWh | Mensual | {"MetricId": "CargMaxTPrima","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}      | http://servapibi.xm.com.co/monthly |
-| Cargo Mínimo T Prima                                      | $COP/kWh | Mensual | {"MetricId": "CargMinTPrima","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}      | http://servapibi.xm.com.co/monthly |
-| Cargo Media T Prima                                       | $COP/kWh | Mensual | {"MetricId": "CargMedTPrima","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}      | http://servapibi.xm.com.co/monthly |
-| Demanda Energía Escenario UPME Alto                       | kWh      | Mensual | {"MetricId": "EscDemUPMEAlto","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}     | http://servapibi.xm.com.co/monthly |
-| Demanda Energía Escenario UPME Medio                      | kWh      | Mensual | {"MetricId": "EscDemUPMEMedio","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}    | http://servapibi.xm.com.co/monthly |
-| Demanda Energía Escenario UPME Bajo                       | kWh      | Mensual | {"MetricId": "EscDemUPMEBajo","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"}     | http://servapibi.xm.com.co/monthly |
-| Compras Bolsa TIE Moneda Sistema                          | $COP     | Horaria | {"MetricId": "CompBolsaTIEMoneda","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"} | http://servapibi.xm.com.co/hourly  |
-| Compras Bolsa Internacional Moneda Sistema                | $COP     | Horaria | {"MetricId": "CompBolsaIntMoneda","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"} | http://servapibi.xm.com.co/hourly  |
-| Compras Bolsa TIE Moneda Agente                           | $COP     | Horaria | {"MetricId": "CompBolsaTIEMoneda","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Agente"}  | http://servapibi.xm.com.co/hourly  |
-| Compras Bolsa Internacional Moneda Agente                 | $COP     | Horaria | {"MetricId": "CompBolsaIntMoneda","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Agente"}  | http://servapibi.xm.com.co/hourly  |
-| Ventas Bolsa TIE Moneda Sistema                           | $COP     | Horaria | {"MetricId": "VentBolsaTIEMoneda","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"} | http://servapibi.xm.com.co/hourly  |
-| Ventas Bolsa Internacional Moneda Sistema                 | $COP     | Horaria | {"MetricId": "VentBolsaIntMoneda","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Sistema"} | http://servapibi.xm.com.co/hourly  |
-| Ventas Bolsa TIE Moneda Agente                            | $COP     | Horaria | {"MetricId": "VentBolsaTIEMoneda","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Agente"}  | http://servapibi.xm.com.co/hourly  |
-| Ventas Bolsa Internacional Moneda Agente                  | $COP     | Horaria | {"MetricId": "VentBolsaIntMoneda","StartDate": "2020-01-01", "EndDate": "2020-02-01","Entity" : "Agente"}  | http://servapibi.xm.com.co/hourly  |
+A continuación, presentamos el listado de métricas disponibles y los parámetros requeridos para realizar peticiones de información:
+
+1. Método: POST
+2. Endpoint: 
+* www.servapibi.xm.com.co/hourly
+* www.servapibi.xm.com.co/daily
+* www.servapibi.xm.com.co/monthly
+* www.servapibi.xm.com.co/lists
+3. Body petición:
+
+{"MetricId": _"MetricID"_,
+"StartDate": _"YYYY-MM-DD"_,
+"EndDate":_"YYYY-MM-DD"_,
+"Entity": _"Cruce"_,
+"Filter":[_"Listado de codigos"_]}
+
+**Nota:** El parámetro _Filter_ es opcional y solo aplica para variables diferente al cruce por _Sistema_
+## Ejemplo para realizar una petición
+
+```
+POST: http://servapibi.xm.com.co/hourly
+
+Body:
+{"MetricId": "Gene",
+"StartDate":"2022-09-01",
+"EndDate":"2022-09-02",
+"Entity": "Recurso",
+"Filter":["TBST","GVIO"]}
+```
+Para conocer el inventario total de variables, cruces y filtros opcionales, consultar:
+
+```
+https://servapibi.xm.com.co/lists
+
+Body:
+{"MetricId": "ListadoMetricas"}
+```
