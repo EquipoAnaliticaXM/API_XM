@@ -173,6 +173,7 @@ A continuación, se listan las variables que se encuentran disponibles para su c
 <li> Listado de métricas </li>
 <li> Listado de ríos </li>
 <li> Listado de embalses </li>
+<li> Listado recursos AGPE</li>
 </ul>
 </details>
 
