@@ -140,6 +140,8 @@ class ReadDB(object):
                                 "Filter": self.filtros}
                 self.connection = requests.post(self.url, json=self.request)
                 data_json = json.loads(self.connection.content)
+                if "Message" in data_json.keys():
+                    raise ValueError(data_json.get("Message",None))
                 temporal_data = pd.json_normalize(data_json['Items'], 'DailyEntities', 'Date', sep='_')
                 if data is None:
                     data = temporal_data.copy()
