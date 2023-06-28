@@ -113,7 +113,7 @@ class ReadDB(object):
                 if data is None:
                     data = temporal_data.copy()
                 else:
-                    data = data.append(temporal_data, ignore_index=True)
+                    data = pd.concat([temporal_data,data])
                 start_date = start_date + dt.timedelta(30)
 
                 if end == end_date:
@@ -146,7 +146,7 @@ class ReadDB(object):
                 if data is None:
                     data = temporal_data.copy()
                 else:
-                    data = data.append(temporal_data, ignore_index=True)
+                    data = pd.concat([temporal_data,data])
 
                 start_date = start_date + dt.timedelta(30)
                 if end == end_date:
@@ -178,7 +178,7 @@ class ReadDB(object):
                 if data is None:
                     data = temporal_data.copy()
                 else:
-                    data = data.append(temporal_data, ignore_index=True)
+                    data = pd.concat([temporal_data,data])
 
                 start_date = start_date + dt.timedelta(732)
                 if end == end_date:
@@ -210,7 +210,7 @@ class ReadDB(object):
                 if data is None:
                     data = temporal_data.copy()
                 else:
-                    data = data.append(temporal_data, ignore_index=True)
+                    data = pd.concat([temporal_data,data])
 
                 start_date = start_date + dt.timedelta(366)
                 if end == end_date:
