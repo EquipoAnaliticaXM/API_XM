@@ -221,10 +221,10 @@ A continuación, presentamos el listado de métricas disponibles y los parámetr
 
 1. Método: POST
 2. Endpoint: 
-* www.servapibi.xm.com.co/hourly
-* www.servapibi.xm.com.co/daily
-* www.servapibi.xm.com.co/monthly
-* www.servapibi.xm.com.co/lists
+* https://servapibi.xm.com.co/hourly
+* https://servapibi.xm.com.co/daily
+* https://servapibi.xm.com.co/monthly
+* https://servapibi.xm.com.co/lists
 3. Body petición:
 ```
 {"MetricId": "MetricID",
@@ -237,7 +237,7 @@ A continuación, presentamos el listado de métricas disponibles y los parámetr
 ## Ejemplo para realizar una petición
 
 ```
-POST: http://servapibi.xm.com.co/hourly
+POST: https://servapibi.xm.com.co/hourly
 
 Body:
 {"MetricId": "Gene",
@@ -249,7 +249,7 @@ Body:
 Para conocer el inventario total de variables, cruces y filtros opcionales, consultar:
 
 ```
-http://servapibi.xm.com.co/lists
+https://servapibi.xm.com.co/lists
 
 Body:
 {"MetricId": "ListadoMetricas"}
