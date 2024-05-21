@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import logging
 from dataclasses import dataclass
-from datetime import datetime as dt
+from datetime import datetime as dtime
 from datetime import timedelta 
 from itertools import repeat
 
@@ -115,8 +115,8 @@ class ReadSIMEM(object):
         """
         Generator to deliver a list of date ranges 
         """
-        start_date = dt.strptime(start_date, DATE_FORMAT)  # Typing
-        end_date = dt.strptime(end_date, DATE_FORMAT)
+        start_date = dtime.strptime(start_date, DATE_FORMAT)  # Typing
+        end_date = dtime.strptime(end_date, DATE_FORMAT)
 
         intervals = (end_date - start_date)/resolution
 
@@ -135,7 +135,7 @@ class ReadSIMEM(object):
         and different dates ranges based on resolution
         """
         start_dates: list[str] = list(date for date in self.generate_start_dates(start_date, end_date, resolution))
-        end_dates: list[str] = [(dt.strptime(date,'%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d') for date in start_dates]
+        end_dates: list[str] = [(dtime.strptime(date,'%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d') for date in start_dates]
         end_dates[-1] = start_dates[-1]
         start_dates.pop(-1)
         end_dates.pop(0)
