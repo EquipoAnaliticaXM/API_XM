@@ -18,6 +18,13 @@ Este repositorio se crea con el fin de compartir herramientas de consulta para e
 **Para utilizar la API XM no se requiere gestionar ningún usuario o clave**
 
 <a id='section2'></a>
+## ¿Cómo se pueden consultar el listado de métricas disponibles en la API XM a través de códido? 
+Para conocer el listado de métricas disponibles se puede consultar el método get_collections() como se muestra a continuación:
+1. from pydataxm import *          # Importa la libreria que fue instalada con pip install pydataxm o tambien desde GitHub
+2. objetoAPI = pydataxm.ReadDB()     # Construir la clase que contiene los métodos de pydataxm
+3. objetoAPI.get_collections()
+
+<a id='section3'></a>
 ## Variables disponibles para consumir en la API XM
 
 A continuación, se listan las variables que se encuentran disponibles para su consulta, las cuales se encuentran clasificadas por tema:
@@ -177,7 +184,7 @@ A continuación, se listan las variables que se encuentran disponibles para su c
 </ul>
 </details>
 
-<a id='section3'></a>
+<a id='section4'></a>
 ## Soluciones diseñadas para consumir la API
 
 Tal como se indicó al inicio, el equipo de Analítica ha diseñado dos aproximaciones para consumir el servicio en los siguientes lenguajes:
