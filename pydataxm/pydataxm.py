@@ -68,16 +68,17 @@ class ReadDB(object):
             start_date: start date consult data using YYYY-MM-DD format
             end_date: end date consult data using YYYY-MM-DD format
             filter: optional parameter, list of values to filter data
-        Returns: 
+        Returns:
             DataFrame with the raw Data
         """
-        if type(filtros)==list:
+        if isinstance(filtros, list):
             self.filtros = filtros
-        elif filtros == None:
-            self.filtros=[]
+        elif filtros is None:
+            self.filtros = []
         else:
-            print('Los filtros deben ingresarse como una lista de valores')
-            self.filtros = list
+            raise ValueError(
+                'Los filtros deben ingresarse como una lista de valores'
+            )
         if coleccion not in self.inventario_metricas.MetricId.values:
             print('No existe la métrica {}'.format(coleccion))
             return pd.DataFrame()
