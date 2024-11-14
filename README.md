@@ -3,29 +3,231 @@
 </p>
 
 ## Índice
-1. [Conceptos generales de la API XM](#section1)
-2. [Variables disponibles para consumir en la API XM](#section2)
-3. [Soluciones diseñadas para consumir la API](#section3)
-4. [Cómo realizar solicitudes filtrando por atributos específicos\?](#section4)
-5. [Restricciones de la API](#section5)
-6. [Comentarios finales](#section6)
-7. [Elementos necesarios para utilizar el servicio desde cualquier cliente](#section7)
+- [Conceptos generales](#conceptos-generales)
+- [Librería python](#librería-python)
+  - [Instalación](#instalación)
+  - [Objetos SIMEM](#objetos-simem)
+    - [Catalogos de SIMEM.co](#catalogos-de-simemco)
+    - [Conjuntos de datos disponibles](#conjuntos-de-datos-disponibles)
+    - [¿Cuál conjunto contiene una variable?](#cuál-conjunto-contiene-una-variable)
+    - [Ejemplo de uso](#ejemplo-de-uso)
+  - [Objetos SINERGOX - XM](#objetos-sinergox---xm)
+    - [¿Cómo se pueden consultar el listado de métricas disponibles en la API XM a través de python?](#cómo-se-pueden-consultar-el-listado-de-métricas-disponibles-en-la-api-xm-a-través-de-python)
+- [Excel (VBA)](#excel-vba)
+  - [SIMEM](#simem)
+  - [SINERGOX - XM](#sinergox---xm)
+- [Endpoints API](#endpoints-api)
+  - [SIMEM](#simem-1)
+    - [Restricciones](#restricciones)
+    - [Elementos para su uso](#elementos-para-su-uso)
+  - [SINERGOX - XM](#sinergox---xm-1)
+    - [Restricciones:](#restricciones-1)
+    - [Variables disponibles para consumir en la API XM](#variables-disponibles-para-consumir-en-la-api-xm)
+    - [¿Cómo realizar solicitudes filtrando por atributos específicos? _(Parámetro opcional)_](#cómo-realizar-solicitudes-filtrando-por-atributos-específicos-parámetro-opcional)
+    - [Elementos necesarios para utilizar el servicio desde cualquier cliente](#elementos-necesarios-para-utilizar-el-servicio-desde-cualquier-cliente)
+    - [Ejemplo para realizar una petición](#ejemplo-para-realizar-una-petición)
 
-<a id='section1'></a>
-## Conceptos generales de la API XM
-Este repositorio se crea con el fin de compartir herramientas de consulta para extraer información relevante del Mercado de Energía Mayorista colombiano usando la API XM. A partir de esta guía, el lector estará en capacidad de construir clientes que consuman el servicio utilizando la herramienta de su preferencia. Posteriormente, detallaremos dos aproximaciones utilizando VBA y Python.
+
+<a id='conceptosGenerales'></a>
+# Conceptos generales 
+Este repositorio se crea con el fin de compartir herramientas de consulta para extraer información relevante del Mercado de Energía Mayorista colombiano usando las librerías asociadas a las api XM y api SIMEM. A partir de esta guía, el lector estará en capacidad de construir clientes que consuman el servicio utilizando la herramienta de su preferencia: python, excel con VBA o directamente la api.
 
 **Para utilizar la API XM no se requiere gestionar ningún usuario o clave**
 
-<a id='section2'></a>
-## ¿Cómo se pueden consultar el listado de métricas disponibles en la API XM a través de códido? 
-Para conocer el listado de métricas disponibles se puede consultar el método get_collections() como se muestra a continuación:
-1. from pydataxm import *          # Importa la libreria que fue instalada con pip install pydataxm o tambien desde GitHub
-2. objetoAPI = pydataxm.ReadDB()     # Construir la clase que contiene los métodos de pydataxm
-3. objetoAPI.get_collections()
+El equipo de Analítica ha diseñado herramientas para consumir el servicio en los siguientes lenguajes:
+
+|Lenguaje|Nombre|Tipo|Instalación|Habilidad requerida|
+|--------|------|----|-----------|-------------------|
+|Python|[pydataxm](https://pypi.org/project/pydataxm/)|Librería| <code> $ pip install pydataxm </code>|Low Code|
+|Excel (VBA) | [Consulta_API_SINERGOX_XM.xlsm](https://github.com/EquipoAnaliticaXM/API_XM/tree/master/Consulta_API_SINERGOX_XM.xlsm)|Macro|No Aplica|No Code|
+|Excel (VBA) | [Consulta_API_SIMEM.xlsm](https://github.com/EquipoAnaliticaXM/API_XM/tree/master/Consulta_API_SIMEM.xlsm)|Macro|No Aplica|No Code|
+
+# Librería python
+
+> [!WARNING]
+> **La librería pydataxm es compatible con versiones superior o iguales a python 3.10.4**
+
+Cada página web de información tiene objetos de python relacionados directamente, se pueden utilizar con la misma librería y realizando los importes correspondientes. 
+
+- [Objetos SIMEM](#objetos-simem)
+- [Objetos SINERGOX](#objetos-sinergox---xm)
+
+
+<a id='instalacion'></a>
+## Instalación
+  
+```console
+pip install pydataxm
+```
+
+También se puede clonar el repositorio en la ruta de preferencia:
+```git
+git clone https://github.com/EquipoAnaliticaXM/API_XM.git "C:\Users\Public\Documents"
+```
+
+
+<a id='objSIMEM'></a>
+## Objetos SIMEM
+
+**Importación en proyecto**
+```python
+from pydataxm.pydatasimem import ReadSIMEM, CatalogSIMEM
+```
+<a id='catalogoDatasets'></a>
+### Catalogos de SIMEM.co
+
+> [!IMPORTANT]
+> El objeto de los catálogos funciona diferente al objeto de lectura de conjuntos de datos.
+
+Se puede solicitar la información utilizando el objeto asociado a los catálogos de la página. Instanciar la clase guarda toda la información en atributos que pueden leerse utilizando las funciones `.get_atributo`
+
+### Conjuntos de datos disponibles
+```python
+# Importación
+from pydataxm.pydatasimem import CatalogSIMEM
+
+# Crear una instancia de catalogo con el tipo
+catalogo_conjuntos = CatalogSIMEM('Datasets')
+
+# Extraer información a utilizar
+print("Nombre: ", catalogo_conjuntos.get_name())
+print("Metadata: ", catalogo_conjuntos.get_metadata())
+print("Columnas: ", catalogo_conjuntos.get_columns())
+
+#  Dataframe con información de los conjuntos de datos
+data = catalogo_conjuntos.get_data()
+print(data)
+```
+
+<a id='catalogovariables'></a>
+### ¿Cuál conjunto contiene una variable?
+
+```python
+# Importación
+from pydataxm.pydatasimem import CatalogSIMEM
+
+# Crear una instancia de catalogo con el tipo
+catalogo_vbles = CatalogSIMEM('variables')
+
+# Extraer información a utilizar
+print("Nombre: ", catalogo_vbles.get_name())
+print("Metadata: ", catalogo_vbles.get_metadata())
+print("Columnas: ", catalogo_vbles.get_columns())
+
+# Dataframe con información de las variables
+data = catalogo_vbles.get_data()
+print(data)
+```
+
+### Ejemplo de uso
+> [!NOTE]
+> La ejecución del snippet con las fechas definidas tarda entre 1 y 2 minutos en ejecutar completamente. Se recomienda usar un cuaderno Jupyter similar a los [ejemplos](https://github.com/EquipoAnaliticaXM/API_XM/tree/master/examples).
+
+El siguiente snippet busca el conjunto asociado a la generación real y realiza una consulta para unas fechas arbitrarias sin el uso de los filtros.
+```python
+# Importación
+from pydataxm.pydatasimem import ReadSIMEM, CatalogSIMEM
+
+# Buscar el id del conjunto de datos
+catalogo = CatalogSIMEM('Datasets')
+data_catalogo = catalogo.get_data()
+print(data_catalogo.query("nombreConjuntoDatos.str.contains('Generación Real')"))
+
+# Crear una instancia de ReadSIMEM
+dataset_id = 'E17D25'
+fecha_inicio = '2024-04-01'
+fecha_fin = '2024-04-30'
+generacion = ReadSIMEM(dataset_id, fecha_inicio, fecha_fin)
+
+# Recuperar datos
+data = generacion.main(filter=False)
+print(data)
+```
+
+
+
+<a id='objSINERGOX'></a>
+## Objetos SINERGOX - XM
+
+**Importación en proyecto**
+```python
+from pydataxm.pydataxm import ReadDB
+```
+
+### ¿Cómo se pueden consultar el listado de métricas disponibles en la API XM a través de python?
+
+Para conocer el listado de métricas disponibles se puede consultar el método `get_collections()` como se muestra a continuación:
+```python
+from pydataxm.pydataxm import ReadDB
+
+# Construir la clase que contiene los métodos de pydataxm
+objetoAPI = pydataxm.ReadDB()
+objetoAPI.get_collections()
+```
+
+# Excel (VBA)
+Otra herramienta que se puede utilizar para obtener información de las API disponibles, son los archivos de excel publicados en el repositorio
+
+## SIMEM
+En **ListadoVariables** se puede realizar la búsqueda del dataset necesario en relación a la variable; por ejemplo, si se desea conocer la _Demanda real_ voy a tener disponible los conjuntos con **datasetID** _c1b851_ y _b7917_; los cuales se diferencian en la cantidad de desagregaciones disponibles, con uno de estos _ID_ y las fechas para extraer datos se puede realizar la solicitud en la hoja **Princpal**, que además de presentar los datos en la sección inferior, muestra información relacionada al conjunto de datos consultado. 
+
+## SINERGOX - XM
+La hoja1 y hoja2 presentan 2 ejemplos de información disponible; la casilla "NombreMetrica" o "Variable" permite elegir entre una lista desplegable los datos que se desean extraer; la única otra opción disponible es la casilla "Filtro" donde se puede realizar un filtrado a través del campo que presenta en "Desagregación". 
+
+> [!IMPORTANT]
+> El campo fechas puede ser modificado pero no puede superar los días máximos que condiciona automáticamente cada variable.
+
+
+# Endpoints API
+
+También se pueden utilizar los enlaces directos con herramientas alternativas a las presentadas en el repositorio usando los enlaces y métodos disponibles.
+
+> [!WARNING]
+> Ambas APIs tienen **restricciones** para evitar la congestión del servicio, si se desean utilizar de forma directa, recuerde considerar esta información.
+
+> [!IMPORTANT]
+> El formato de fecha que recibe la API es YYYY-MM-DD
+
+
+## SIMEM
+
+### Restricciones
+  Las restricciones existen en relación a la _granularidad_ de cada conjunto de datos. La cantidad de días se mide con la diferencia entre el parámetro _startDate_ y _endDate_.
+  - **Catálogos:** No aplica. 
+  - **Horaria y Diaria:** Máximo 31 días por llamado
+  - **Semanal y Mensual:** Máximo 731 días por llamado
+  - **Anual:** Máximo 1827 días por llamado
+  
+
+### Elementos para su uso
+Se utiliza el método GET para traer la información utilizando el siguiente **enlace:**
+
+>[!IMPORTANT]
+> El parámetro **datasetid** es obligatorio para cualquier consulta.
+```
+https://www.simem.co/backend-files/api/PublicData?datasetid={}
+```
+
+**Parámetros:**
+- datasetId = Código único de 6 dígitos alfanuméricos que representa el conjunto de datos a consultar
+- startDate = Fecha del primer dato
+- endDate = Fecha del último dato
+- columnDestinyName = Columna por la que se hará filtrado
+- values = Lista de valores a filtrar en la columna definida. Separados por "," (coma) si es más de uno.
+
+## SINERGOX - XM
+
+### Restricciones:
+Con el fin de no congestionar el servicio, se han establecido restricciones a las consultas así:
+* Para datos horarios y diarios, máximo 30 días por llamado
+* Para datos mensuales, máximo 731 días por llamado
+* Para datos anuales, máximo 366 días por llamado
+
+
+
 
 <a id='section3'></a>
-## Variables disponibles para consumir en la API XM
+### Variables disponibles para consumir en la API XM
 
 A continuación, se listan las variables que se encuentran disponibles para su consulta, las cuales se encuentran clasificadas por tema:
 
@@ -185,17 +387,7 @@ A continuación, se listan las variables que se encuentran disponibles para su c
 </details>
 
 <a id='section4'></a>
-## Soluciones diseñadas para consumir la API
-
-Tal como se indicó al inicio, el equipo de Analítica ha diseñado dos aproximaciones para consumir el servicio en los siguientes lenguajes:
-
-|Lenguaje|Nombre|Tipo|Instalación|Habilidad requerida|
-|--------|------|----|-----------|-------------------|
-|Python|pydataxm|Librería| <code> $ pip install pydataxm </code>|Low Code|
-|Excel (VBA) | Consulta_API_XM.xlsm|Macro|No Aplica|No Code|
-
-<a id='section4'></a>
-## ¿Cómo realizar solicitudes filtrando por atributos específicos? _(Parámetro opcional)_
+### ¿Cómo realizar solicitudes filtrando por atributos específicos? _(Parámetro opcional)_
 En caso de no ser especificado dentro de la solicitud, el servicio retornará todos los registros disponibles. 
 
 Con este parámetro se permite extraer datos para una serie de entidades personalizada. Las métricas que pueden ser filtradas son todas aquellas que tienen cruces por:
@@ -211,19 +403,10 @@ Para conocer el detalle de los nombres de cada río o embalse le invitamos a con
 
 En la carpeta _examples_ encontrará los ejemplos para consumir el servicio usando filtros. [Ir a ejemplos](https://github.com/EquipoAnaliticaXM/API_XM/tree/master/examples)
 
-<a id='section5'></a>
-## Restricciones de la API:
-Con el fin de no congestionar el servicio, se han establecido restricciones a las consultas así:
-* Para datos horarios y diarios, máximo 30 días por llamado
-* Para datos mensuales, máximo 731 días por llamado
-* Para datos anuales, máximo 366 días por llamado
 
-<a id='section6'></a>
-## Comentarios finales
-Tener en cuenta que el formato de fecha que recibe la API es YYYY-MM-DD
 
 <a id='section7'></a>
-## Elementos necesarios para utilizar el servicio desde cualquier cliente
+### Elementos necesarios para utilizar el servicio desde cualquier cliente
 A continuación, presentamos el listado de métricas disponibles y los parámetros requeridos para realizar peticiones de información:
 
 1. Método: POST
@@ -232,7 +415,7 @@ A continuación, presentamos el listado de métricas disponibles y los parámetr
 * https://servapibi.xm.com.co/daily
 * https://servapibi.xm.com.co/monthly
 * https://servapibi.xm.com.co/lists
-3. Body petición:
+1. Body petición:
 ```
 {"MetricId": "MetricID",
 "StartDate": _"YYYY-MM-DD",
@@ -240,8 +423,11 @@ A continuación, presentamos el listado de métricas disponibles y los parámetr
 "Entity": "Cruce",
 "Filter":["Listado de codigos"]}
 ```
-**Nota:** El parámetro _Filter_ es opcional y solo aplica para variables diferente al cruce por _Sistema_
-## Ejemplo para realizar una petición
+> [!NOTE]
+> El parámetro _Filter_ es opcional y solo aplica para variables diferente al cruce por _Sistema_
+
+
+### Ejemplo para realizar una petición
 
 ```
 POST: https://servapibi.xm.com.co/hourly
@@ -261,3 +447,5 @@ https://servapibi.xm.com.co/lists
 Body:
 {"MetricId": "ListadoMetricas"}
 ```
+
+
