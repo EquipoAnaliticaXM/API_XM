@@ -76,44 +76,34 @@ class _Validation:
 @dataclass
 class ReadSIMEM:
     """
-    Class to request datasets to SIMEM using API
-    Attributes:
-    -----------
-    url_api (str): The base URL for a request to the specific dataset ID using SIMEM API.
-    __filter_values (tuple[str, list]): The filter values for the request.
-    __filter_url (str): The filter section of te URL for the dataset request.
-    __start_date (datetime.datetime): The starting date for the data slicing.
-    __end_date (datetime.datetime): The ending date for the data slicing.
-    __dataset_info (dict): A dictionary with information about the specified dataset.
-    __columns (pd.DataFrame): Dataframe with the information of all the columns.
-    self.__metadata: pd.DataFrame = pd.DataFrame.from_records([metadata])
-    self.__name: str = response["result"]["name"]
-    self.__granularity: str = metadata["granularity"]
-    self.__resolution: int = self.__check_date_resolution(self.__granularity)
+    Class to request dataset information and data to SIMEM using API
 
+    Args: 
+    var_dataset_id : str
+        ID of the dataset to request data.
+    var_start_date : str | dt.datetime 
+        The starting date for the data slicing.
+    var_end_date : str | dt.datetime 
+        The ending date for the data slicing.
+    var_column_destiny (Optional): str 
+        The column name to apply the filter on.
+    var_values (Optional): str | list 
+        The values to filter the column by.
+    
     Methods:
-    --------
-    __init__(self, var_dataset_id: str, var_start_date: str | dt.datetime, var_end_date: str | dt.datetime, var_column_destiny: str = None, var_values: str | list = None):
-        Initializes the ReadSIMEM instance with the given parameters.
-
-    set_filter(self, var_column, var_values) -> None:
-        Sets the filter for the dataset request.
-
     set_datasetid(self, var_dataset_id) -> None:
         Sets the dataset ID for the request.
 
     set_dates(self, var_start_date: str | dt.datetime, var_end_date: str | dt.datetime) -> None:
         Sets the start and end dates for the dataset request.
 
-    _set_dataset_data(self) -> dict:
-        Internal method to set dataset data.
-
+    set_filter(self, var_column, var_values) -> None:
+        Sets the filter for the dataset request.
+        
     main(self, filter: bool = False) -> pd.DataFrame:
-        Creates a .csv file with the dataset information for the given dates.
-
-    _get_records(self, var_url: str, session) -> list:
-        Makes the request and returns a list of records from the dataset.
+        Creates a .csv file with the dataset records for the given dates.
     """
+
     def __init__(self, var_dataset_id: str, var_start_date: str | dt.datetime, var_end_date: str| dt.datetime,
                  var_column_destiny: str = None, var_values: str | list = None):
         self.url_api: str = BASE_API_URL
@@ -124,17 +114,16 @@ class ReadSIMEM:
 
     def set_filter(self, var_column, var_values) -> None:
         """
-        Sets the filter for the dataset request.
+        Sets the filter for the dataset request and the complement for the URL.
+        If one of the 2 arguments are not given the filter won't set.
         
-        Parameters:
-        -----------
+        Args:
         var_column : str
             The column name to apply the filter on.
         var_values : str | list
             The values to filter the column by.
         
         Returns:
-        --------
         None
         """
         var_filter = _Validation.filter(var_column, var_values)
@@ -148,15 +137,13 @@ class ReadSIMEM:
 
     def set_datasetid(self, var_dataset_id) -> None:
         """
-        Sets the dataset ID for the request.
+        Sets the dataset ID for the request and complement the basic url for the defined dataset.
         
         Parameters:
-        -----------
         var_dataset_id : str
             The dataset ID to be set.
         
         Returns:
-        --------
         None
         """
         var_dataset_id = _Validation.datasetid(var_dataset_id)
@@ -170,14 +157,12 @@ class ReadSIMEM:
         Sets the start and end dates for the dataset request.
         
         Parameters:
-        -----------
         var_start_date : str | dt.datetime
-            The start date of the dataset request.
+            The start date for the dataset request.
         var_end_date : str | dt.datetime
-            The end date of the dataset request.
+            The end date for the dataset request.
         
         Returns:
-        --------
         None
         """
         var_start_date = _Validation.date(var_start_date)
@@ -188,14 +173,15 @@ class ReadSIMEM:
         self.__end_date: dt.datetime = var_end_date
         logging.info("Dates defined")
         
-    def _set_dataset_data(self) -> dict:
+    def _set_dataset_data(self) -> None:
         """
-        Internal method to set dataset data.
+        Internal method to set dataset information.
+        Make a initial request to the API to extract and organize all the information 
+        related to the required dataset.
         
         Returns:
-        --------
-        dict
-            A dictionary containing the dataset information.
+        None
+    
         """
         with requests.Session() as session:
             url = self.url_api.format(REFERENCE_DATE, REFERENCE_DATE)
@@ -205,6 +191,7 @@ class ReadSIMEM:
             self.__dataset_info = response
             metadata = response["result"]["metadata"]
             self.__columns: pd.DataFrame = pd.DataFrame.from_dict(response["result"]["columns"])
+            self.__date_filter: str = response["result"]["filterDate"]
             self.__metadata: pd.DataFrame = pd.DataFrame.from_records([metadata])
             self.__name: str = response["result"]["name"]
             self.__granularity: str = metadata["granularity"]
@@ -217,12 +204,10 @@ class ReadSIMEM:
         in the given dates.
         
         Parameters:
-        -----------
         filter : bool
             Whether to apply the filter to the dataset request.
         
         Returns:
-        --------
         pd.DataFrame
             A DataFrame containing the dataset records.
         """
@@ -241,14 +226,12 @@ class ReadSIMEM:
         Makes the request and returns a list of records from the dataset.
         
         Parameters:
-        -----------
         var_url : str
             The URL for the dataset request.
         session : requests.Session
             The session for making the request.
         
         Returns:
-        --------
         list
             A list of records from the dataset.
         """
@@ -264,14 +247,12 @@ class ReadSIMEM:
         the records of the selected dates.
         
         Parameters:
-        -----------
         var_dataset_info : dict
             The dataset information.
         records : list[list]
             The list of records from the dataset.
         
         Returns:
-        --------
         dict
             A dictionary containing the dataset info and records.
         """
@@ -286,16 +267,14 @@ class ReadSIMEM:
         with the response.
         
         Parameters:
-        -----------
         url : str
             The URL for the dataset request.
         session : requests.Session
             The session for making the request.
         
         Returns:
-        --------
         dict
-            A dictionary containing the response.
+            A dictionary containing the response in json encoded format.
         """
         response = session.get(url)
         logging.info("Response with status: %s", response.status_code)
@@ -307,12 +286,10 @@ class ReadSIMEM:
         Checks if the date range given in the object is allowed in a request to the API.
         
         Parameters:
-        -----------
         granularity : str
             The granularity of the date range (e.g., 'Diaria', 'Horaria', 'Mensual', 'Semanal', 'Anual').
         
         Returns:
-        --------
         int
             The maximum allowed date range in days.
         """
@@ -333,7 +310,6 @@ class ReadSIMEM:
         Generator to deliver a list of date ranges.
         
         Parameters:
-        -----------
         start_date : dt.datetime
             The start date of the range.
         end_date : dt.datetime
@@ -342,7 +318,6 @@ class ReadSIMEM:
             The maximum allowed date range in days.
         
         Yields:
-        -------
         str
             The start dates in the specified date range formatted as strings.
         """
@@ -358,7 +333,6 @@ class ReadSIMEM:
         and different date ranges based on resolution.
         
         Parameters:
-        -----------
         start_date : str
             The start date of the range in 'YYYY-MM-DD' format.
         end_date : str
@@ -369,7 +343,6 @@ class ReadSIMEM:
             Whether to apply the filter to the dataset request (default is False).
         
         Returns:
-        --------
         list[str]
             A list of URLs for the dataset requests.
         """
@@ -392,7 +365,6 @@ class ReadSIMEM:
         Returns the dataset ID.
         
         Returns:
-        --------
         str
             The dataset ID.
         """
@@ -400,10 +372,9 @@ class ReadSIMEM:
 
     def get_startdate(self) -> str:
         """
-        Returns the start date of the dataset request.
+        Returns the start date of the dataset object.
         
         Returns:
-        --------
         str
             The start date in 'YYYY-MM-DD' format.
         """
@@ -411,21 +382,19 @@ class ReadSIMEM:
 
     def get_enddate(self) -> str:
         """
-        Returns the end date of the dataset request.
+        Returns the end date of the dataset object.
         
         Returns:
-        --------
         str
             The end date in 'YYYY-MM-DD' format.
         """
         return self.__end_date
 
-    def get_filter_url(self) -> str:
+    def get_filter_url(self) -> str | None:
         """
-        Returns the filter URL for the dataset request.
+        Returns the filter URL complement for the dataset request.
         
         Returns:
-        --------
         str
             The filter URL.
         """
@@ -434,12 +403,11 @@ class ReadSIMEM:
             logging.info("No filter assigned.")
         return var_filter_url
 
-    def get_filters(self) -> tuple | str:
+    def get_filters(self) -> tuple | None:
         """
         Returns the filter values for the dataset request.
         
         Returns:
-        --------
         tuple | str
             The filter values.
         """
@@ -450,10 +418,9 @@ class ReadSIMEM:
 
     def get_resolution(self) -> int:
         """
-        Returns the resolution of the dataset request.
+        Returns the resolution of the dataset object.
         
         Returns:
-        --------
         int
             The resolution in days.
         """
@@ -461,10 +428,9 @@ class ReadSIMEM:
 
     def get_granularity(self) -> str:
         """
-        Returns the granularity of the dataset request.
+        Returns the granularity of the dataset object.
         
         Returns:
-        --------
         str
             The granularity (e.g., 'Diaria', 'Horaria', 'Mensual', 'Semanal', 'Anual').
         """
@@ -475,7 +441,6 @@ class ReadSIMEM:
         Returns the metadata of the dataset.
         
         Returns:
-        --------
         dict
             The metadata of the dataset.
         """
@@ -486,7 +451,6 @@ class ReadSIMEM:
         Returns the columns of the dataset.
         
         Returns:
-        --------
         pd.DataFrame
             A DataFrame containing the columns of the dataset.
         """
@@ -497,18 +461,26 @@ class ReadSIMEM:
         Returns the name of the dataset.
         
         Returns:
-        --------
         str
             The name of the dataset.
         """
         return self.__name
+    
+    def get_filter_column(self) -> str:
+        """
+        Retrieves the assigned column to filter the dates in SIMEM.
+
+        Returns:
+        str
+            The current column filter.
+        """
+        return self.__date_filter
 
     def __get_dataset_info(self) -> dict:
         """
         Returns the dataset information.
         
         Returns:
-        --------
         dict
             A dictionary containing the dataset information.
         """
@@ -517,28 +489,20 @@ class ReadSIMEM:
 
 class CatalogSIMEM(ReadSIMEM):
     """
-    Class to interact with the SIMEM catalog.
+    Class to interact with the SIMEM catalogs.
     
-    Attributes:
-    -----------
-    url_api : str
-        The base URL for the SIMEM API.
-    
+    Args:
+    catalog_type : str
+        The type of catalog to extract from the webpage ('Datasets', 'Variables')
+
     Methods:
-    --------
-    __init__(self, catalog_type: str):
-        Initializes the CatalogSIMEM instance with the given catalog type.
+    get_data(self) -> pd.DataFrame:
+        Retrieves the catalog data stored in the object.
+
     """
     
     def __init__(self, catalog_type: str):
-        """
-        Initializes the CatalogSIMEM instance with the given catalog type.
         
-        Parameters:
-        -----------
-        catalog_type : str
-            The type of catalog (e.g., 'datasets').
-        """
         self.set_dates(REFERENCE_DATE, TODAY)
         self.url_api = BASE_API_URL
         
@@ -555,5 +519,11 @@ class CatalogSIMEM(ReadSIMEM):
             self.__data = pd.DataFrame.from_dict(datasets)
         logging.info("Catalog retrieved correctly.")
 
-    def get_data(self):
+    def get_data(self) -> pd.DataFrame:
+        """
+        Retrieves the data stored in the object.
+
+        Returns:
+            pd.DataFrame: The data stored in the object.
+        """
         return self.__data
