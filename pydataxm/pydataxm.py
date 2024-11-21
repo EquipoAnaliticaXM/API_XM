@@ -13,7 +13,13 @@ import datetime as dt
 from pydataxm.pydatasimem import *
 
 import aiohttp # es para hacer peticiones asincronas
-import asyncio # es para hacer peticiones asincronas	
+import asyncio # es para hacer peticiones asincronas
+
+import warnings
+warnings.filterwarnings("ignore")
+
+import nest_asyncio
+nest_asyncio.apply()
 
 class ReadDB(object):
 
@@ -174,11 +180,14 @@ class ReadDB(object):
                 list_bodies.append(temp_body)
           
             
-            if __name__ == "__main__":
+            if __name__ == "__main__":    
+
                 data = asyncio.run(self.run_async(list_bodies, endpoint))
+
             else:
                 loop = asyncio.get_event_loop()
                 data = loop.run_until_complete(self.run_async(list_bodies, endpoint))
+                loop.close()
             
 
         elif self.inventario_metricas.query("MetricId == @coleccion and Entity == @metrica".format(coleccion, metrica)).Type.values == 'ListsEntities':
