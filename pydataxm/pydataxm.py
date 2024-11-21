@@ -187,7 +187,6 @@ class ReadDB(object):
             else:
                 loop = asyncio.get_event_loop()
                 data = loop.run_until_complete(self.run_async(list_bodies, endpoint))
-                loop.close()
             
 
         elif self.inventario_metricas.query("MetricId == @coleccion and Entity == @metrica".format(coleccion, metrica)).Type.values == 'ListsEntities':
