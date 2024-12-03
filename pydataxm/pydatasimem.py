@@ -4,6 +4,7 @@ import pandas as pd
 from dataclasses import dataclass
 import datetime as dt
 from itertools import repeat
+from typing import Optional, Union, Tuple, List
 
 DATASETID = ""
 VARIABLE_INVENTORY_ID = "a5a6c4"
@@ -21,7 +22,7 @@ class _Validation:
         logging.debug(approve_message)
 
     @staticmethod
-    def filter(var_column : str, var_values: str | list) -> None | tuple[str,list]:
+    def filter(var_column : str, var_values: Union[str, List]) -> Optional[Tuple[str, List]]:
         if not var_column and not var_values:
             logging.info("No filter has been chosen.")
             return None
@@ -104,8 +105,12 @@ class ReadSIMEM:
         Creates a .csv file with the dataset records for the given dates.
     """
 
-    def __init__(self, var_dataset_id: str, var_start_date: str | dt.datetime, var_end_date: str| dt.datetime,
-                 var_column_destiny: str = None, var_values: str | list = None):
+    def __init__(self, 
+                 var_dataset_id: str,
+                 var_start_date: Union[str, dt.datetime],
+                 var_end_date: Union[str, dt.datetime],
+                 var_column_destiny: Optional[str] = None,
+                 var_values: Optional[Union[str, List]] = None):
         self.url_api: str = BASE_API_URL
         self.set_datasetid(var_dataset_id)
         self.set_dates(var_start_date, var_end_date)
@@ -151,8 +156,9 @@ class ReadSIMEM:
         self.url_api = self.url_api + f"&datasetId={var_dataset_id}"
         logging.info("ID defined")
 
-    def set_dates(self, var_start_date: str | dt.datetime, 
-                  var_end_date: str | dt.datetime) -> None:
+    def set_dates(self, 
+                 var_start_date: Union[str, dt.datetime],
+                 var_end_date: Union[str, dt.datetime]) -> None:
         """
         Sets the start and end dates for the dataset request.
         
@@ -403,7 +409,7 @@ class ReadSIMEM:
             logging.info("No filter assigned.")
         return var_filter_url
 
-    def get_filters(self) -> tuple | None:
+    def get_filters(self) -> Optional[Tuple[str, List]]:
         """
         Returns the filter values for the dataset request.
         
