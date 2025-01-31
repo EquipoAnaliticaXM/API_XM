@@ -144,7 +144,7 @@ class ReadDB(object):
             end_periods = end_periods.append(pd.DatetimeIndex([end_date]))
         
         start_periods = end_periods.map(lambda x: x - pd.offsets.MonthBegin(1))        
-        if not  pd.Timestamp(start_date).is_month_start:            
+        if (not pd.Timestamp(start_date).is_month_start) or (start_date==end_date):            
             start_periods.values[0] = pd.Timestamp(start_date)            
         
         # Crear lista de periodos    
