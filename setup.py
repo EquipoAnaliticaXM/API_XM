@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
   name = 'pydataxm',       
   packages = ['pydataxm'],  
-  version = '0.3.12',     
+  version = '0.3.13',     
   license='MIT', 
   description = 'Interface to play with the API XM and API SIMEM',
   author = 'Equipo Analitica XM',
