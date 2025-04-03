@@ -10,22 +10,16 @@ import json
 import pandas as pd
 import datetime as dt
 #noinspection SpellCheckingInspection
-from pydataxm.pydatasimem import *
-
 import aiohttp # es para hacer peticiones asincronas
 import asyncio # es para hacer peticiones asincronas
-
 import warnings
 warnings.filterwarnings("ignore")
-
 import nest_asyncio
 nest_asyncio.apply()
 
 class ReadDB(object):
-
     def __new__(cls):
         return super(ReadDB, cls).__new__(cls)
-    
     
     def __init__(self):
         """This object was created to extract data from API XM"""   
@@ -33,7 +27,6 @@ class ReadDB(object):
         self.connection = None
         self.request = ''
         self.inventario_metricas = self.all_variables()
-        
         
     def all_variables(self):
         """This method allows the user to get all variables availables into the API XM.
@@ -207,7 +200,7 @@ class ReadDB(object):
         return data
 
 if __name__ == "__main__":
-    
     consult = ReadDB()
-    listado = consult.request_data("PrecBolsNaci", "Sistema", dt.date(2020, 10, 1), dt.date(2024, 11, 10))
-    metricas = consult.get_collections()
+    metricas: pd.DataFrame = consult.get_collections()
+    df: pd.DataFrame = consult.request_data("PrecBolsNaci", "Sistema", dt.date(2024, 12, 1), dt.date(2024, 12, 31))
+    print(df.head())

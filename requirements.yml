@@ -1,0 +1,14 @@
+name: entorno_api
+dependencies:
+  - python>=3.10
+  - pip
+  - wheel
+  - setuptools
+  - pip:
+      - pandas>=2.0.0
+      - numpy
+      - pydataxm
+      - requests
+      - aiohttp
+      - asyncio
+      - nest_asyncio
