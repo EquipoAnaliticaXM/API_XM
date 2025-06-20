@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pydataxm',
-    version='0.3.14',
+    version='0.3.15',
     packages=find_packages(),
     license='MIT',
     description='Interface to interact with API XM and API SIMEM',
@@ -12,7 +12,7 @@ setup(
     download_url='https://raw.githubusercontent.com/EquipoAnaliticaXM/API_XM/master/pydataxm/pydataxm.py',
     python_requires='>=3.10',
     install_requires=[
-        'pandas>=2.0.0',
+        'pandas>=2.2.3',
         'numpy',
         'requests',
         'aiohttp',
