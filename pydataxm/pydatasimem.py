@@ -87,13 +87,13 @@ class _Validation:
         return cat_type
     
     @staticmethod
-    def cod_variable(cod_variable: str, list_variables: dict):
+    def cod_variable(cod_variable: str, list_variables: dict, type: str):
         if not isinstance(cod_variable, str):
-            raise TypeError("Incorrect data type for cod_variable, must be a string")
+            raise TypeError(f"Incorrect data type for {cod_variable}, must be a string")
         if cod_variable in list_variables.keys():
             return cod_variable
         else:
-            raise ValueError(f"The variable code '{cod_variable}' is not available, use the function get_collection() to get all the available variables.")
+            raise ValueError(f"The {type} code '{cod_variable}' is not available, use the function get_collection() to get all the available {type}s.")
         
     @staticmethod
     def dataset(dataset: pd.DataFrame, start_date: str, end_date: str):
@@ -665,7 +665,7 @@ class VariableSIMEM:
     version (Optional): int | str
         The version of the variable.
     quality_check (Optional): bool 
-        Is the object is for Calidad functions.
+        If the object is for Calidad functions.
     
     Methods:
     get_collection() -> pd.DataFrame:
@@ -679,20 +679,21 @@ class VariableSIMEM:
     """
 
     def __init__(self, cod_variable: str, start_date: str, end_date: str, version : int|str = 0, quality_check: bool = False):
-        self.__json_file = VariableSIMEM._read_json()
-        self.__var = _Validation.cod_variable(cod_variable=cod_variable, list_variables=self.__json_file)
+        self._json_file = VariableSIMEM._read_json()
+        self._json_file = self._json_file['variable']
+        self._var = _Validation.cod_variable(cod_variable=cod_variable, list_variables=self._json_file, type='variable')
         self.__user_version = version 
-        self.__dataset_id = self.__json_file[self.__var]["dataset_id"]
-        self.__variable_column = self.__json_file[self.__var]['var_column']
-        self.__date_column = self.__json_file[self.__var]['date_column']
-        self.__version_column = self.__json_file[self.__var]['version_column']
-        self.__value_column = self.__json_file[self.__var]['value_column']
-        self.__dimensions = self.__json_file[self.__var]['dimensions']
-        self.__esTX2 = self.__json_file[self.__var]['esTX2PrimeraVersion']
-        self.__start_date = _Validation.date(start_date)
-        self.__end_date = _Validation.date(end_date)
-        self.__quality_check = quality_check
-        self.__data = None
+        self._dataset_id = self._json_file[self._var]["dataset_id"]
+        self._variable_column = self._json_file[self._var]['var_column']
+        self._date_column = self._json_file[self._var]['date_column']
+        self._version_column = self._json_file[self._var]['version_column']
+        self._value_column = self._json_file[self._var]['value_column']
+        self._dimensions = self._json_file[self._var]['dimensions']
+        self.__esTX2 = self._json_file[self._var]['esTX2PrimeraVersion']
+        self._start_date = _Validation.date(start_date)
+        self._end_date = _Validation.date(end_date)
+        self._quality_check = quality_check
+        self._data = None
         self.__versions_df = None
 
     @staticmethod
@@ -725,7 +726,7 @@ class VariableSIMEM:
         """
         
         json_file = VariableSIMEM._read_json()
-        df =  pd.DataFrame.from_dict(json_file, orient='index', columns=['name', 'dimensions', 'version_column', 'date_column']).reset_index().rename(
+        df =  pd.DataFrame.from_dict(json_file['variable'], orient='index', columns=['name', 'dimensions', 'version_column', 'date_column']).reset_index().rename(
             columns={'index': 'CodigoVariable', 'name': 'Nombre', 'dimensions': 'Dimensiones'})
         
         dimensions = df[['version_column', 'date_column']].apply(lambda x: list(x.dropna()), axis=1)
@@ -749,20 +750,21 @@ class VariableSIMEM:
             pd.DataFrame
                 The variable dataset.
         """
-        if self.__data is not None:
+        if self._data is not None:
             return
     
-        var_column = self.__variable_column
+        var_column = self._variable_column
 
-        dataset = ReadSIMEM(self.__dataset_id, start_date, end_date, var_column, self.__var)
+        dataset = ReadSIMEM(self._dataset_id, start_date, end_date, var_column, self._var)
         check_filter = False
         if var_column is not None:
             self.__granularity = dataset.get_granularity()
             check_filter = True
 
         data = dataset.main(filter = check_filter)
-        self.__data = _Validation.dataset(data, start_date, end_date)
-        return self.__data
+        self._data = _Validation.dataset(data, start_date, end_date)
+        return self._data
+
 
     def _index_df(self, dataset: pd.DataFrame) -> pd.DataFrame:
         """
@@ -777,13 +779,13 @@ class VariableSIMEM:
                 The variable dataset indexed.
         """
 
-        date_column = self.__date_column
-        version_column = self.__version_column
+        date_column = self._date_column
+        version_column = self._version_column
 
         if version_column is not None:
-            self.__index_data = dataset.set_index([date_column, version_column] + self.__dimensions)
+            self.__index_data = dataset.set_index([date_column, version_column] + self._dimensions)
         else:
-            self.__index_data = dataset.set_index([date_column] + self.__dimensions)
+            self.__index_data = dataset.set_index([date_column] + self._dimensions)
 
         return self.__index_data
         
@@ -796,10 +798,10 @@ class VariableSIMEM:
                 The indexed data.
         """
 
-        self._read_dataset_data(start_date=self.__start_date, end_date=self.__end_date)
-        data = self._index_df(dataset=self.__data)
+        self._read_dataset_data(start_date=self._start_date, end_date=self._end_date)
+        data = self._index_df(dataset=self._data)
 
-        if self.__version_column is not None:
+        if self._version_column is not None:
             data = self._calculate_version(dataset=data, version=self.__user_version)
 
         return data
@@ -814,10 +816,10 @@ class VariableSIMEM:
         """
 
         data = self._get_index_data()
-        value_column = self.__json_file[self.__var]['value_column']
-        var_column = self.__json_file[self.__var]['var_column']
+        value_column = self._json_file[self._var]['value_column']
+        var_column = self._json_file[self._var]['var_column']
 
-        if self.__quality_check:
+        if self._quality_check:
             data = data.reset_index()
             return self.__set_format_for_qualitycheck(dataset=data)
         data = data.rename(columns = {value_column: "Valor"}) if var_column is not None else data
@@ -832,11 +834,11 @@ class VariableSIMEM:
                 Return the dataframe with this columns: 'fecha', 'codigoMaestra', 'codigoVariable', 'maestra' and 'valor'.
         """
 
-        maestra = self.__json_file[self.__var]['maestra_column']
-        cod_maestra = self.__json_file[self.__var]['codMaestra_column']
-        value_column = self.__json_file[self.__var]['value_column']
-        var_column = self.__json_file[self.__var]['var_column']
-        date_column = self.__date_column
+        maestra = self._json_file[self._var]['maestra_column']
+        cod_maestra = self._json_file[self._var]['codMaestra_column']
+        value_column = self._json_file[self._var]['value_column']
+        var_column = self._json_file[self._var]['var_column']
+        date_column = self._date_column
         maestra_column = 'maestra'
         cod_maestra_column = 'codigoMaestra'
         date = 'fecha'
@@ -1078,7 +1080,7 @@ class VariableSIMEM:
         all_months = set(pd.date_range(start=start_date, end=end_date, freq='MS').strftime("%Y-%m-%d"))
         existing_months = set(dataset['FechaInicio'])
         missing_months = list(all_months - existing_months)
-
+        
         if missing_months:
             missing_data = pd.concat(list(map(VariableSIMEM._process_month, missing_months)), ignore_index=True)
             dataset = pd.concat([dataset, missing_data], ignore_index=True)
@@ -1218,11 +1220,11 @@ class VariableSIMEM:
         """
 
         df = dataset.copy()
-        version_column = self.__version_column
-        date_column = self.__date_column
+        version_column = self._version_column
+        date_column = self._date_column
         
         if self.__versions_df is None:
-            self.__versions_df = VariableSIMEM._versions(start_date=self.__start_date, end_date=self.__end_date, 
+            self.__versions_df = VariableSIMEM._versions(start_date=self._start_date, end_date=self._end_date, 
                                                           dataset_id=version_dataset_id, version=version, esTX2 = self.__esTX2)
         filtered_df = self.__versions_df
 
@@ -1252,8 +1254,8 @@ class VariableSIMEM:
             'max': float(dataset[column].max()),
             'null_count': int(dataset[column].isnull().sum()),
             'zero_count': int((dataset[column] == 0).sum()),
-            'start_date': pd.to_datetime(self.__start_date).strftime('%Y-%m-%d'),
-            'end_date': pd.to_datetime(self.__end_date).strftime('%Y-%m-%d'),
+            'start_date': pd.to_datetime(self._start_date).strftime('%Y-%m-%d'),
+            'end_date': pd.to_datetime(self._end_date).strftime('%Y-%m-%d'),
             'granularity': self.__granularity
             }
         return stats
@@ -1268,27 +1270,75 @@ class VariableSIMEM:
         """
 
         statistics = {}
-        self._read_dataset_data(start_date=self.__start_date, end_date=self.__end_date)
-        data = self._index_df(dataset=self.__data)
-        column = self.__value_column
-        name = self.__json_file[self.__var]['name']
+        self._read_dataset_data(start_date=self._start_date, end_date=self._end_date)
+        data = self._index_df(dataset=self._data)
+        column = self._value_column
+        name = self._json_file[self._var]['name']
         data[column] = data[column].astype(float)
 
-        if self.__version_column is not None:
+        if self._version_column is not None:
             data = self._calculate_version(dataset=data, version=self.__user_version)
             data = data[[column]]
-            data = data.groupby([self.__date_column, self.__version_column]).sum()
+            data = data.groupby([self._date_column, self._version_column]).sum()
         statistics[name] = self.__calculate_stats(dataset=data, column=column)
 
         return statistics
+
+class MaestraSIMEM(VariableSIMEM):
+    """
+    Class to view the information of a SIMEM maestra.
+
+    Args: 
+    maestra : str
+        Code of the maestra.
+    start_date : str | dt.datetime 
+        The starting date for the data slicing.
+    end_date : str | dt.datetime 
+        The ending date for the data slicing.
+    
+    Methods:
+    get_collection() -> pd.DataFrame:
+        Return a dataframe with the list of available maestras.
+    """
+
+    def __init__(self, maestra: str, start_date: str, end_date: str):
+        self._json_file = VariableSIMEM._read_json()
+        self._json_file = self._json_file['maestra']
+        self._var = _Validation.cod_variable(cod_variable=maestra, list_variables=self._json_file, type='maestra')
+        self._dataset_id = self._json_file[self._var]["dataset_id"]
+        self._variable_column = self._json_file[self._var]['var_column']
+        self._date_column = self._json_file[self._var]['date_column']
+        self._version_column = self._json_file[self._var]['version_column']
+        self._value_column = self._json_file[self._var]['value_column']
+        self._dimensions = self._json_file[self._var]['dimensions']
+        self._start_date = _Validation.date(start_date)
+        self._end_date = _Validation.date(end_date)
+        self._quality_check = None
+        self._data = None
+    
+    @staticmethod
+    def get_collection() -> pd.DataFrame:
+        """
+        Return a dataframe with the list of available maestras.
+        
+        Returns:
+            pd.DataFrame
+                Contains the list of available maestras.
+        """
+        
+        json_file = VariableSIMEM._read_json()
+        df =  pd.DataFrame.from_dict(json_file['maestra'], orient='index', columns=['name', 'dimensions']).reset_index().rename(
+            columns={'index': 'Maestra', 'name': 'Descripción', 'dimensions': 'Cruces'})
+ 
+        return df
 #%%
 if __name__ == '__main__':
 
     dataset_id = 'c41fe8'
     fecha_inicio = '2025-02-01'
-    fecha_fin = '2025-02-28'
+    fecha_fin = '2025-02-10'
     variables = VariableSIMEM.get_collection()
-    pb_nal_tx1 = VariableSIMEM(cod_variable="PB_Nal", start_date=fecha_inicio, end_date=fecha_fin, version='TX1')
+    pb_nal_tx1 = VariableSIMEM(cod_variable="PB_Nal", start_date=fecha_inicio, end_date=fecha_fin, version='TXF')
     pb_nal_tx2 = VariableSIMEM(cod_variable="PB_Nal", start_date=fecha_inicio, end_date=fecha_fin, version='TX2')
 
 #%%

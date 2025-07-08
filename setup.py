@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pydataxm',
-    version='0.3.15',
+    version='0.3.16',
     packages=find_packages(),
     license='MIT',
     description='Interface to interact with API XM and API SIMEM',
@@ -23,6 +23,6 @@ setup(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.10',
     ],
 )
