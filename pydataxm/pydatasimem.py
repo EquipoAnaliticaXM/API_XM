@@ -16,7 +16,7 @@ from itertools import repeat
 import time 
 from pprint import pprint
 
-global datasetid, variable_inventory_id, catalog_id, reference_date, base_api_url, url_json_variables, today, version_dataset_id, daily_dataset_id, version_column_df_ver, date_format
+global datasetid, variable_inventory_id, catalog_id, reference_date, base_api_url, base_api_info_url, base_api_data_url, url_json_variables, today, version_dataset_id, daily_dataset_id, version_column_df_ver, date_format, dic_filters_op
 datasetid = ""
 variable_inventory_id = "a5a6c4"
 catalog_id =  "e007fb"
@@ -24,10 +24,26 @@ reference_date = '1990-01-01'
 date_format = "%Y-%m-%d"
 today = dt.datetime.strftime(dt.datetime.now(), date_format)
 base_api_url = "https://www.simem.co/backend-files/api/PublicData?startdate={}&enddate={}"
+base_api_data_url = "https://www.simem.co/backend-files/api/datos-publicos?startDate={}&endDate={}"
+base_api_info_url = "https://www.simem.co/backend-files/api/detalle-datos-publicos?"
 url_json_variables = 'https://www.simem.co/backend-datos/vars/listado_variables.json'
 version_dataset_id = '24914F'
 daily_dataset_id = '7a30a3'
 version_column_df_ver = 'Version'
+dic_filters_op = {
+    "=":"eq",
+    "!=":"neq",
+    "like":"ct",
+    "!like":"dnc",
+    "in":"in",
+    "!in":"nin",
+    ">":"gt",
+    ">=":"gte",
+    "<":"lt",
+    "<=":"lte",
+    "between":"btw",
+    "!between":"nbtw"
+}
 
 class _Validation:
     
@@ -35,24 +51,6 @@ class _Validation:
     def log_approve(variable):
         approve_message = f"Variable values validated: {variable}"
         logging.debug(approve_message)
-
-    @staticmethod
-    def filter(var_column : str, var_values: str | list) -> None | tuple[str,list]:
-        if not var_column and not var_values:
-            logging.info("No filter has been chosen.")
-            return None
-        if not var_column or not var_values:
-            logging.info("Check that the column and values are both defined for the filter. No filter has been chosen")
-            return None
-        if not isinstance(var_column, str):
-            raise TypeError("Column filter must be a string")
-        if isinstance(var_values, str):
-            var_values = [var_values]
-        elif not isinstance(var_values, list):
-            raise TypeError("Values filter must be a string or a list")
-        var_filter = (var_column, var_values)
-        _Validation.log_approve(var_filter)
-        return var_filter
     
     @staticmethod
     def date(var_date) -> dt.datetime:
@@ -100,6 +98,37 @@ class _Validation:
         if len(dataset) == 0:
             raise TypeError(f"There is no data for the date range between {start_date} and {end_date}.")
         return dataset
+    
+    @staticmethod
+    def validate_filter(filter: list):
+        if len(filter) != 3:
+            raise TypeError(f"Incorrect len for the filter, must have 3 parts [Field,Operation,Value]")
+        if not isinstance(filter[0], str) or not isinstance(filter[1], str):
+            raise TypeError(f"The column and the operation must be strings")
+        if not isinstance(filter[2], (list, str)):
+            raise TypeError(f"The values must be list or string")
+        if not all(isinstance(f, str) for f in filter[2]):
+            raise TypeError(f"All the filter values must be strings")
+        else:
+            return filter
+
+    @staticmethod
+    def validate_operation_value(operation: str, values: list|str):
+        if operation not in dic_filters_op.keys():
+            raise TypeError(f"The Operation only can be one of these list: {dic_filters_op.keys()}")
+        elif operation in ("between","!between","in","!in") and not isinstance(values, list):
+            raise ValueError(f"For the {operation} operation, the filter values needs to be in a list")
+        elif operation not in ("between","!between","in","!in") and not isinstance(values, str):
+            raise ValueError(f"For {operation} operation, the filter values must be string")
+        elif operation in ("between","!between") and len(values) != 2:
+            raise ValueError(f"For a {operation} operation, the filter needs two values")
+        elif operation in ("in","!in") and len(values) < 1:
+            raise ValueError(f"For {operation} operation, the filter needs more than one value")
+        else:
+            if isinstance(values, list):
+                return operation, ",".join(values)
+            else:
+                return operation, values
 
 @dataclass
 class ReadSIMEM:
@@ -113,20 +142,16 @@ class ReadSIMEM:
         The starting date for the data slicing.
     end_date : str | dt.datetime 
         The ending date for the data slicing.
-    filter_column (Optional): str 
-        The column name to apply the filter on.
-    filter_values (Optional): str | list 
-        The values to filter the column by.
+    filters: list
+            Filters for the data
     
     Attributes:
     url_api : str
         The base URL for the SIMEM API.
     session : requests.Session
         The session for making requests to the API.
-    __filter_values : tuple[str, list]
+    __filters : list
         The filter values for the dataset request.
-    __filter_url : str
-        The filter URL for the dataset request.
     __dataset_info : dict
         The dataset information.
     __metadata : pd.DataFrame
@@ -139,19 +164,16 @@ class ReadSIMEM:
         The granularity of the dataset.
     __resolution : int
         The resolution of the dataset.
-    __date_filter : str
-        The date filter column.
 
     Methods:
 
-    __init__(self, dataset_id: str, start_date: str | dt.datetime, end_date: str | dt.datetime,
-             filter_column: str = None, filter_values: str | list = None):
+    __init__(self, dataset_id: str, start_date: str | dt.datetime, 
+                 end_date: str| dt.datetime, filters: list = None):
         Initializes the ReadSIMEM instance with the given parameters making a request to the API to extract
         the dataset metadata for further use.
 
-    set_filter(self, column, values) -> None:
-        Sets the filter for the dataset request and the complement for the URL.
-        If one of the 2 arguments are not given the filter won't set.
+    set_filter(self, filters: list) -> list:
+        Sets the filter for the dataset request and transform it for the API.
     
     set_dates(self, start_date: str | dt.datetime, end_date: str | dt.datetime) -> None:
         Sets the start and end dates for the dataset request.
@@ -160,45 +182,65 @@ class ReadSIMEM:
         Retrieves the dataset data for the given dates.
     """
 
-    def __init__(self, dataset_id: str, start_date: str | dt.datetime, end_date: str| dt.datetime,
-                 filter_column: str | None = None, filter_values: str | list | None = None):
+    def __init__(self, dataset_id: str, start_date: str | dt.datetime, 
+                 end_date: str| dt.datetime, filters: list = None):
         t0 = time.time()
         print('*' * 100)
         print('Initializing object')
         self.url_api: str = base_api_url
+        self.url_data_api: str = base_api_data_url
+        self.url_info_api: str = base_api_info_url
         self._set_datasetid(dataset_id)
         self.set_dates(start_date, end_date)
-        self.set_filter(filter_column, filter_values)
+        self.__filters = ReadSIMEM.__get_filter(filters) if filters is not None else filters
         self._set_dataset_data()
         t1 = time.time()
         logging.info(f'Initiallization complete in: {t1 - t0 : .2f} seconds.')
         print(f'The object has been initialized with the dataset: "{self.__name}"')
         print('*' * 100)
 
-    def set_filter(self, column, values) -> None:
+    @staticmethod
+    def __get_filter(filters: list) -> list:
         """
-        Sets the filter for the dataset request and the complement for the URL.
-        If one of the 2 arguments are not given the filter won't set.
+        Get and transform the filter provided by the user.
         
         Parameters:
-        column : str
-            The column name to apply the filter on.
-        values : str | list
-            The values to filter the column by.
+        filters: list
+            Filters for the data
         
         Returns:
-        None
+        list
+            The filters transformed for the API.
         """
-        var_filter = _Validation.filter(column, values)
-        if var_filter is None:
-            var_filter = ''
-            self.__filter_url: str = "&columnDestinyName=&values="
-            return
-        self._filter_values: tuple[str, list] =  var_filter
-        self.__filter_url: str = f"&columnDestinyName={column}&values={','.join(var_filter[1])}"
-        logging.info("Filter defined")
 
-    def _set_datasetid(self, dataset_id) -> None:
+        def build(item):
+            field, op, value = _Validation.validate_filter(item)
+            op, value = _Validation.validate_operation_value(op, value)
+            return {"Fd": field, "Op": dic_filters_op.get(op), "Vl": value, "Lg": "and"}
+
+        if isinstance(filters, list) and filters and all(isinstance(i, list) for i in filters):
+            return list(map(build, filters))
+        else:
+            return [build(filters)]
+        
+    def set_filter(self, filters: list) -> list:
+        """
+        Set and transform the filter provided by the user.
+        
+        Parameters:
+        filters: list
+            Filters for the data
+        
+        Returns:
+        list
+            The filters transformed for the API.
+        """
+        if filters is None:
+            raise TypeError(f"The filters are empty")
+        self.__filters = ReadSIMEM.__get_filter(filters)
+        logging.info("Filters defined")
+
+    def _set_datasetid(self, dataset_id, catalog: bool = False) -> None:
         """
         Sets the dataset ID for the request and complement the basic url for the defined dataset.
         
@@ -211,7 +253,11 @@ class ReadSIMEM:
         """
         dataset_id = _Validation.datasetid(dataset_id)
         self.__dataset_id: str = dataset_id.lower()
-        self.url_api = self.url_api + f"&datasetId={dataset_id}"
+        if catalog:
+            self.url_api = self.url_api + f"&datasetId={dataset_id}"
+        else:
+            self.url_data_api = self.url_data_api + f"&datasetId={dataset_id}"
+            self.url_info_api = self.url_info_api + f"&datasetId={dataset_id}"
         logging.info("ID defined")
 
     def set_dates(self, start_date: str | dt.datetime, 
@@ -234,12 +280,9 @@ class ReadSIMEM:
             logging.info("Dataset will be empty - Start date is bigger than end date")
         self.__start_date: dt.datetime = start_date
         self.__end_date: dt.datetime = end_date
-        if hasattr(self, '__dataset_info'):
-            self.__dataset_info["parameters"]["startDate"] =  dt.datetime.strftime(start_date, date_format)
-            self.__dataset_info["parameters"]["endDate"] =  dt.datetime.strftime(end_date, date_format)
         logging.info("Dates defined")
         
-    def _set_dataset_data(self) -> None:
+    def _set_dataset_data(self, catalog: bool = False) -> None:
         """
         Internal method to set dataset information and metadata.
         Makes a initial request to the API to extract and organize all the information 
@@ -250,14 +293,13 @@ class ReadSIMEM:
     
         """
         with requests.Session() as session:
-            url = self.url_api.format(reference_date, reference_date)
-            response = self._make_request(url, session)
+            url = self.url_api if catalog else self.url_info_api
+            url = url.format(reference_date, reference_date)
+            response = self._make_request(url, session, type = 'get')
             response["parameters"]["startDate"] = dt.datetime.strftime(self.get_startdate(), date_format)
             response["parameters"]["endDate"] = dt.datetime.strftime(self.get_enddate(), date_format)
-            self.__dataset_info = response
             metadata = response["result"]["metadata"]
             self.__columns: pd.DataFrame = pd.DataFrame.from_dict(response["result"]["columns"])
-            self.__date_filter: str = response["result"]["filterDate"]
             self.__metadata: pd.DataFrame = pd.DataFrame.from_records([metadata])
             self.__name: str = response["result"]["name"]
             self.__granularity: str = metadata["granularity"]
@@ -285,7 +327,8 @@ class ReadSIMEM:
 
         t0 = time.time()
         resolution: int = self.get_resolution()
-        urls: list[str] = self.__create_urls(self.get_startdate(), self.get_enddate(), resolution, filter)
+        self.__filter = filter
+        urls: list[str] = self.__create_urls(self.get_startdate(), self.get_enddate(), resolution)
         t1 = time.time()
         print(f'Creacion url: {t1 - t0}')
 
@@ -306,7 +349,7 @@ class ReadSIMEM:
         
         return result
 
-    def _get_records(self, url: str, session: requests.Session) -> list:
+    def _get_records(self, url: str, session: requests.Session, type: str = 'post') -> list:
         """
         Makes the request and returns a list of records from the dataset.
         
@@ -315,14 +358,18 @@ class ReadSIMEM:
             The URL for the dataset request.
         session : requests.Session
             The session for making the request.
+        type: str
+            The Type of the request (GET or POST)
         
         Returns:
         list
             A list of records from the dataset.
         """
-        response = self._make_request(url, session)
-        result = response.get('result', {}) 
-        records = result.get('records', [])
+        records = self._make_request(url, session, type=type, filter=self.__get_filter_bool(), 
+                                     filters=self.get_filters())
+        if type == 'get':  
+            result = records.get('result', {})
+            records = result.get('records', [])
         if len(records) == 0:
            print(f'For the URL: {url}') 
            print('There are 0 records') 
@@ -360,7 +407,7 @@ class ReadSIMEM:
         return file_name 
     
     @staticmethod
-    def _make_request(url: str, session: requests.Session) -> dict:
+    def _make_request(url: str, session: requests.Session, type: str, filter: bool = False, filters: list = None) -> dict:
         """
         Makes the GET request to the URL inside a session and delivers a dictionary
         with the response.
@@ -370,23 +417,36 @@ class ReadSIMEM:
             The URL for the dataset request.
         session : requests.Session
             The session for making the request.
+        type: str
+            The Type of the request (GET or POST)
+        filter : bool
+            If True, applies a filter to the data extraction process. Default is False.
+        filters (Optional): list
+            Filters for the data
         
         Returns:
         dict
             A dictionary containing the response in json encoded format.
         """
-        response = session.get(url)
+        
+        if type == 'get':
+            response = session.get(url)
+        elif type == 'post' and filter:
+            response = session.post(url, json=filters, stream=True)
+        else:
+            response = session.post(url, stream=True)
         logging.info("Response with status: %s", response.status_code)
         response.raise_for_status()
         data = response.json()
 
-        status : str = data.get('success', False)
-        api_params = data.get('parameters', None)
-        datasetid = api_params.get('idDataset', None)
-        if status is not True and datasetid not in [catalog_id, variable_inventory_id]: 
-            message : str = data.get('message', None)
-            print(f'For the URL: {url}')
-            print(f'The next message was returned: {message}')
+        if type == 'get':
+            status : str = data.get('success', False)
+            api_params = data.get('parameters', None)
+            datasetid = api_params.get('idDataset', None)
+            if status is not True and datasetid not in [catalog_id, variable_inventory_id]: 
+                message : str = data.get('message', None)
+                print(f'For the URL: {url}')
+                print(f'The next message was returned: {message}')
 
         return data
 
@@ -453,7 +513,7 @@ class ReadSIMEM:
 
         return start_dates, end_dates
 
-    def __create_urls(self, start_date: str , end_date: str , resolution: int, filter: bool= False) -> list[str]:
+    def __create_urls(self, start_date: str , end_date: str , resolution: int) -> list[str]:
         """
         Receive the limit dates and deliver the API URLs for the dataset id 
         and different date ranges based on resolution.
@@ -465,8 +525,6 @@ class ReadSIMEM:
             The end date of the range in 'YYYY-MM-DD' format.
         resolution : int
             The maximum allowed date range in days.
-        filter : bool, optional
-            Whether to apply the filter to the dataset request (default is False).
         
         Returns:
         list[str]
@@ -474,12 +532,9 @@ class ReadSIMEM:
         """
 
         start_dates, end_dates = self._generate_dates(start_date=start_date, end_date=end_date, resolution=resolution)
-        if filter:
-            base_url = self.url_api + self.get_filter_url()
-        else:
-            base_url = self.url_api
+        base_url = self.url_data_api
         urls: list[str] = list(map(base_url.format, start_dates, end_dates))
-            
+
         logging.info("Urls created between %s and %s for %s", self.get_startdate(), self.get_enddate(), self.get_datasetid())
         return urls
 
@@ -513,18 +568,16 @@ class ReadSIMEM:
         """
         return self.__end_date
 
-    def get_filter_url(self) -> str | None:
+    def __get_filter_bool(self) -> bool | None:
         """
-        Returns the filter URL complement for the dataset request.
+        True to aply the filter, False to not do so.
         
         Returns:
-        str
-            The filter URL.
+        bool
+            If the filter is going to be used.
         """
-        var_filter_url = getattr(self, "_ReadSIMEM__filter_url", None)
-        if var_filter_url is None:
-            logging.info("No filter assigned.")
-        return var_filter_url
+        var_filter_bool = getattr(self, "_ReadSIMEM__filter", None)
+        return var_filter_bool
 
     def get_filters(self) -> tuple | None:
         """
@@ -534,10 +587,11 @@ class ReadSIMEM:
         tuple | str
             The filter values.
         """
-        var_filter_values = getattr(self, "_filter_values", None)
-        if var_filter_values is None:
-            logging.info("No filter assigned.")  
-        return var_filter_values  
+
+        var_filters = getattr(self, "_ReadSIMEM__filters", None)
+        if var_filters is None:
+            logging.info("No filter assigned.")
+        return var_filters
 
     def get_resolution(self) -> int:
         """
@@ -588,27 +642,6 @@ class ReadSIMEM:
             The name of the dataset.
         """
         return self.__name
-    
-    def get_filter_column(self) -> str:
-        """
-        Retrieves the assigned column to filter the dates in SIMEM.
-
-        Returns:
-        str
-            The current column filter.
-        """
-        return self.__date_filter
-
-    def __get_dataset_info(self) -> dict:
-        """
-        Returns the dataset information.
-        
-        Returns:
-        dict
-            A dictionary containing the dataset information.
-        """
-        return self.__dataset_info
-
 
 class CatalogSIMEM(ReadSIMEM):
     """
@@ -627,18 +660,18 @@ class CatalogSIMEM(ReadSIMEM):
     def __init__(self, catalog_type: str):
         
         self.set_dates(reference_date, today)
-        self.url_api = base_api_url
+        self.url_api: str = base_api_url
         
         catalog_type = _Validation.catalog_type(catalog_type)
         if catalog_type == 'datasets':
-            self._set_datasetid(catalog_id)
+            self._set_datasetid(catalog_id, catalog=True)
         elif catalog_type == 'variables':
-            self._set_datasetid(variable_inventory_id)
+            self._set_datasetid(variable_inventory_id, catalog=True)
 
-        self._set_dataset_data()
+        self._set_dataset_data(catalog=True)
         self.url_api = self.url_api.format(self.get_startdate(), self.get_enddate())
         with requests.Session() as session:
-            datasets = super()._get_records(self.url_api, session)
+            datasets = super()._get_records(self.url_api, session, type='get')
             self.__data = pd.DataFrame.from_records(datasets)
         logging.info("Catalog retrieved correctly.")
 
@@ -664,6 +697,8 @@ class VariableSIMEM:
         The ending date for the data slicing.
     version (Optional): int | str
         The version of the variable.
+    filters (Optional): list
+        Filters for the data
     quality_check (Optional): bool 
         If the object is for Calidad functions.
     
@@ -678,7 +713,10 @@ class VariableSIMEM:
         Return a json with static information (mean, min, max, std dev, dates, median, etc) of the variable.
     """
 
-    def __init__(self, cod_variable: str, start_date: str, end_date: str, version : int|str = 0, quality_check: bool = False):
+    _cache: dict = {}
+    
+    def __init__(self, cod_variable: str, start_date: str, end_date: str, version : int|str = 0, 
+                 filters: list = None, quality_check: bool = False):
         self._json_file = VariableSIMEM._read_json()
         self._json_file = self._json_file['variable']
         self._var = _Validation.cod_variable(cod_variable=cod_variable, list_variables=self._json_file, type='variable')
@@ -692,6 +730,7 @@ class VariableSIMEM:
         self.__esTX2 = self._json_file[self._var]['esTX2PrimeraVersion']
         self._start_date = _Validation.date(start_date)
         self._end_date = _Validation.date(end_date)
+        self.__filters = filters
         self._quality_check = quality_check
         self._data = None
         self.__versions_df = None
@@ -735,6 +774,30 @@ class VariableSIMEM:
         df = df.drop(['version_column', 'date_column'], axis=1)
         
         return df
+    
+    @staticmethod
+    def create_filter(filter_1: list,filter_2: list):
+        """
+        Complete the filter using the filter provided by the user.
+        
+        Parameters:
+            filter_1 : list 
+                The filter of VariableSIMEM.
+            filter_2 : list
+                The filter provided by the user.
+        
+        Returns:
+            list
+                Filter completed.
+        """
+        if isinstance(filter_2, list) and filter_2 and all(isinstance(i, list) for i in filter_2):
+            filter_2.append(filter_1)
+            return filter_2
+        else:
+            filter_3 = []
+            filter_3.append(filter_1)
+            filter_3.append(filter_2)
+            return filter_3
 
     def _read_dataset_data(self, start_date: str, end_date: str) -> pd.DataFrame:
         """
@@ -755,7 +818,10 @@ class VariableSIMEM:
     
         var_column = self._variable_column
 
-        dataset = ReadSIMEM(self._dataset_id, start_date, end_date, var_column, self._var)
+        filters=[var_column,"=",self._var]
+        if self.__filters is not None:
+            filters = VariableSIMEM.create_filter(filters,self.__filters)
+        dataset = ReadSIMEM(self._dataset_id, start_date, end_date, filters=filters)
         check_filter = False
         if var_column is not None:
             self.__granularity = dataset.get_granularity()
@@ -1131,15 +1197,20 @@ class VariableSIMEM:
         """
 
         first_day = start_date.replace(day=1)
-        version_df = ReadSIMEM(dataset_id, first_day, end_date).main()
-        version_df = VariableSIMEM._validate_version_df(version_df=version_df, first_date=first_day)
-        df_sorted = VariableSIMEM._order_date(dataset=version_df, date_column='FechaPublicacion')
+        cache_key = (first_day, end_date)
         
-        if isinstance(version, str):
-            df_filtered = VariableSIMEM._filter_by_version(dataset=df_sorted, version_value=version, start_date=first_day, end_date=end_date)
-        elif isinstance(version, int):
-            df_filtered = VariableSIMEM._filter_by_order(dataset=df_sorted, order_value=version, start_date=first_day, end_date=end_date, esTX2=esTX2)
-
+        if cache_key in VariableSIMEM._cache:
+                    df_filtered = VariableSIMEM._cache[cache_key]
+        else:
+            version_df = ReadSIMEM(dataset_id, first_day, end_date).main()
+            version_df = VariableSIMEM._validate_version_df(version_df=version_df, first_date=first_day)
+            df_sorted = VariableSIMEM._order_date(dataset=version_df, date_column='FechaPublicacion')
+            
+            if isinstance(version, str):
+                df_filtered = VariableSIMEM._filter_by_version(dataset=df_sorted, version_value=version, start_date=first_day, end_date=end_date)
+            elif isinstance(version, int):
+                df_filtered = VariableSIMEM._filter_by_order(dataset=df_sorted, order_value=version, start_date=first_day, end_date=end_date, esTX2=esTX2)
+            VariableSIMEM._cache[cache_key] = df_filtered
         return df_filtered
 
     @staticmethod
@@ -1198,7 +1269,7 @@ class VariableSIMEM:
         dataset = dataset.merge(dates_df, left_on = version_column, right_on = 'Version')
         dataset['FechaFin'] = pd.to_datetime(dataset['FechaFin'])
         dataset = dataset[(dataset[date_temp] >= dataset['FechaInicio']) & (dataset[date_temp] < dataset['FechaFin']+pd.Timedelta(days=1))]
-        dataset = dataset.drop(columns = ['FechaInicio', 'FechaFin', 'FechaPublicacion', 'EsMaximaVersion', 'order'])
+        dataset = dataset.drop(columns = ['FechaInicio', 'FechaFin', 'FechaPublicacion', 'esMaximaVersion', 'order'])
         dataset = dataset.rename(columns = {date_temp: date_column})
         dataset.set_index(index_names, inplace=True)
 
@@ -1334,21 +1405,69 @@ class MaestraSIMEM(VariableSIMEM):
 #%%
 if __name__ == '__main__':
 
-    dataset_id = 'c41fe8'
-    fecha_inicio = '2025-02-01'
-    fecha_fin = '2025-02-10'
+    # Se obtiene el catálogo de variables implementadas en VariableSIMEM
     variables = VariableSIMEM.get_collection()
-    pb_nal_tx1 = VariableSIMEM(cod_variable="PB_Nal", start_date=fecha_inicio, end_date=fecha_fin, version='TXF')
-    pb_nal_tx2 = VariableSIMEM(cod_variable="PB_Nal", start_date=fecha_inicio, end_date=fecha_fin, version='TX2')
+
+    # Se obtiene el catágo de variables de SIMEM
+    catalog_var = CatalogSIMEM("variables")
+    data_var = catalog_var.get_data()
+    print(data_var)
+
+    # Se obtiene el catágo de conjuntos de SIMEM
+    catalog_df = CatalogSIMEM(catalog_type='datasets')
+    data_df = catalog_df.get_data()
+    print(data_df)
 
 #%%
-    pb_nal_tx1.get_data()
-    pb_nal_tx1.describe_data()
+    # Se crean parámetros para el uso de VariableSIMEM
+
+    codigo_variable = 'PB_Nal'
+    fecha_inicio = '2024-01-01'
+    fecha_fin = '2026-02-28'
+    filter_variable = ["Valor","between",["290","300"]]
+    
+#%%
+    # Se inicilizan dos instancias de VariableSIMEM, una para extraer la última versión y otra para extraer solamente la versión TXR
+    
+    pb_nal_final = VariableSIMEM(cod_variable=codigo_variable, start_date=fecha_inicio, 
+                               end_date=fecha_fin, version=0, filters=filter_variable)
+    pb_nal_txr = VariableSIMEM(cod_variable=codigo_variable, start_date=fecha_inicio, 
+                               end_date=fecha_fin, version='TXR', filters=filter_variable)
 
 #%%
-    pb_nal_tx2.get_data()
-    pb_nal_tx2.describe_data()
+    # Se obtienen los datos del precio de bolsa nacional en su última versión
+
+    data_final=pb_nal_final.get_data()
+    pb_nal_final.describe_data()
+    print(data_final)
 
 #%%
-    simem = ReadSIMEM(dataset_id, fecha_inicio, fecha_fin, 'CodigoVariable', 'GReal')
-    df = simem.main(output_folder="", filter=False)
+    # Se obtienen los datos del precio de bolsa nacional en versión TX3
+
+    data_txr=pb_nal_txr.get_data()
+    pb_nal_txr.describe_data()
+    print(data_txr)
+
+#%%
+    # Se crean parámetros para el uso de ReadSIMEM
+
+    dataset_id = 'aecac4'
+    fecha_inicio = '2024-01-01'
+    fecha_fin = '2026-02-28'
+    filters = [["CodigoVariable","=","CERE"],["Valor","<","80"],["Valor",">","79"]]
+
+#%%
+    # Se inicializa la instancia de ReadSIMEM y se obtienen los datos del CERE aplicando los filtros
+
+    simem = ReadSIMEM(dataset_id, fecha_inicio, fecha_fin, filters=filters)
+    df = simem.main(output_folder="", filter=True)
+    print(df)
+    print(simem.get_columns())
+    print(simem.get_datasetid())
+    print(simem.get_name())
+    print(simem.get_metadata())
+    print(simem.get_granularity())
+    print(simem.get_startdate())
+    print(simem.get_enddate())
+    print(simem.get_filters())
+    print(simem.get_resolution())
