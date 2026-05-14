@@ -132,7 +132,8 @@ class ReadDB(object):
             return pd.DataFrame()
         
         # Generar periodos de inicio y fin de mes
-        end_periods = pd.date_range(start_date, end_date, freq='M', inclusive = 'both')    
+        # 'M' fue deprecado en pandas 2.2.0 a favor de 'ME' (Month End)
+        end_periods = pd.date_range(start_date, end_date, freq='ME', inclusive='both')
         if not  pd.Timestamp(end_date).is_month_end:
             end_periods = end_periods.append(pd.DatetimeIndex([end_date]))
         
@@ -191,11 +192,20 @@ class ReadDB(object):
             data_json = json.loads(self.connection.content)
             data = pd.json_normalize(data_json['Items'], 'ListEntities','Date', sep='_')
         
+        # errors='ignore' fue removido en pandas 2.2.0; reemplazado por try/except
+        # para preservar el comportamiento original (mantener la columna sin convertir
+        # cuando no es numerica/fecha) y evitar ValueError: invalid error value specified.
         cols = data.columns
         for col in cols:
-            data[col] = pd.to_numeric(data[col],errors='ignore')
+            try:
+                data[col] = pd.to_numeric(data[col])
+            except (ValueError, TypeError):
+                pass
         if ('Date' or 'date') in cols:
-            data['Date'] = pd.to_datetime(data['Date'],errors='ignore', format= '%Y-%m-%d')
+            try:
+                data['Date'] = pd.to_datetime(data['Date'], format='%Y-%m-%d')
+            except (ValueError, TypeError):
+                pass
     
         return data
 
