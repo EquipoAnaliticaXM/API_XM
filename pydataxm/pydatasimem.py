@@ -436,7 +436,17 @@ class ReadSIMEM:
         else:
             response = session.post(url, stream=True)
         logging.info("Response with status: %s", response.status_code)
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError:
+            try:
+                error_msg = response.json()
+            except Exception:
+                error_msg = response.text
+            raise Exception(
+                f"Error en la solicitud (HTTP {response.status_code}): {error_msg}"
+            )
+        # response.raise_for_status()
         data = response.json()
 
         if type == 'get':
@@ -661,6 +671,7 @@ class CatalogSIMEM(ReadSIMEM):
         
         self.set_dates(reference_date, today)
         self.url_api: str = base_api_url
+        self._filters = None
         
         catalog_type = _Validation.catalog_type(catalog_type)
         if catalog_type == 'datasets':
@@ -790,14 +801,17 @@ class VariableSIMEM:
             list
                 Filter completed.
         """
-        if isinstance(filter_2, list) and filter_2 and all(isinstance(i, list) for i in filter_2):
-            filter_2.append(filter_1)
-            return filter_2
+        if filter_1 is not None:
+            if isinstance(filter_2, list) and filter_2 and all(isinstance(i, list) for i in filter_2):
+                filter_2.append(filter_1)
+                return filter_2
+            else:
+                filter_3 = []
+                filter_3.append(filter_1)
+                filter_3.append(filter_2)
+                return filter_3
         else:
-            filter_3 = []
-            filter_3.append(filter_1)
-            filter_3.append(filter_2)
-            return filter_3
+            return filter_2
 
     def _read_dataset_data(self, start_date: str, end_date: str) -> pd.DataFrame:
         """
@@ -817,12 +831,13 @@ class VariableSIMEM:
             return
     
         var_column = self._variable_column
+        check_filter = False
 
         filters = [var_column,"=",self._var] if var_column is not None else None
         if self._filters is not None:
             filters = VariableSIMEM.create_filter(filters,self._filters)
+            check_filter = True
         dataset = ReadSIMEM(self._dataset_id, start_date, end_date, filters=filters)
-        check_filter = False
         if var_column is not None:
             self.__granularity = dataset.get_granularity()
             check_filter = True
@@ -1065,7 +1080,7 @@ class VariableSIMEM:
             'FechaInicio' : registry['FechaInicio'].values[0],
             'FechaFin' : registry['FechaFin'].values[0],
             'FechaPublicacion' : pd.to_datetime(date.values[0]).date(),
-            'EsMaximaVersion' : 0,
+            'esMaximaVersion' : 0,
             'order' : order
         }
 
@@ -1242,10 +1257,11 @@ class VariableSIMEM:
                 'FechaInicio' : last_month.strftime("%Y-%m-%d"),
                 'FechaFin' : last_month.strftime("%Y-%m-%d"),
                 'FechaPublicacion' : last_month.strftime("%Y-%m-%d"),
-                'EsMaximaVersion' : 0
+                'esMaximaVersion' : 0
             }
             new_registry_df = pd.DataFrame([new_registry])
             version_df = pd.concat([version_df, new_registry_df], ignore_index=True)
+
         return version_df
     
     @staticmethod
@@ -1400,6 +1416,8 @@ class MaestraSIMEM(VariableSIMEM):
         The starting date for the data slicing.
     end_date : str | dt.datetime 
         The ending date for the data slicing.
+    filters (Optional): list
+        Filters for the data 
     
     Methods:
     get_collection() -> pd.DataFrame:
@@ -1468,7 +1486,11 @@ class MaestraSIMEM(VariableSIMEM):
 if __name__ == '__main__':
 
     # Se obtiene el catálogo de variables implementadas en VariableSIMEM
+    
     variables = VariableSIMEM.get_collection()
+
+    # Se obtiene el catálogo de maestras implementadas en MaestraSIMEM
+    maestras = MaestraSIMEM.get_collection()
 
     # Se obtiene el catágo de variables de SIMEM
     catalog_var = CatalogSIMEM("variables")
@@ -1496,11 +1518,6 @@ if __name__ == '__main__':
     pb_nal_txr = VariableSIMEM(cod_variable=codigo_variable, start_date=fecha_inicio, 
                                end_date=fecha_fin, version='TXR', filters=filter_variable)
 
-    codigo_variable = 'PB_Nal'
-    fecha_inicio = '2024-01-01'
-    fecha_fin = '2026-02-28'
-    filter_variable = ["Valor","between",["290","300"]]
-    
 #%%
     # Se obtienen los datos del precio de bolsa nacional en su última versión
 
@@ -1538,3 +1555,23 @@ if __name__ == '__main__':
     print(simem.get_enddate())
     print(simem.get_filters())
     print(simem.get_resolution())
+
+#%%
+    # Se crean parámetros para el uso de MaestraSIMEM
+
+    maestra = 'Agente'
+    fecha_inicio = '2026-01-01'
+    fecha_fin = '2026-01-31'
+    filter_maestra = ["ActividadAgente","=","Distribuidor"]
+
+#%%
+    # Se iniciliza instancia de MaestraSIMEM usando un filtro
+
+    agente = MaestraSIMEM(maestra=maestra, start_date=fecha_inicio, 
+                               end_date=fecha_fin, filters=filter_maestra)
+    
+#%%
+    # Se obtienen los datos del precio de bolsa nacional en su última versión
+
+    data_agente=agente.get_data()
+    print(data_agente)
