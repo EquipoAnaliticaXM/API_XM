@@ -138,7 +138,7 @@ class ReadDB(object):
         
         start_periods = end_periods.map(lambda x: x - pd.offsets.MonthBegin(1))        
         if (not pd.Timestamp(start_date).is_month_start) or (start_date==end_date):            
-            start_periods.values[0] = pd.Timestamp(start_date)            
+            start_periods = pd.DatetimeIndex([pd.Timestamp(start_date)]).append(start_periods[1:])            
         
         # Crear lista de periodos    
         list_periods = list(zip(start_periods.astype(str), end_periods.astype(str)))
@@ -201,7 +201,10 @@ class ReadDB(object):
         return data
 
 if __name__ == "__main__":
-    consult = ReadDB()
-    metricas: pd.DataFrame = consult.get_collections()
-    df: pd.DataFrame = consult.request_data("PrecBolsNaci", "Sistema", dt.date(2024, 12, 1), dt.date(2024, 12, 31))
-    print(df.head())
+    api = ReadDB()
+    data = api.request_data("ListadoRecursos", "Sistema", dt.date(2026, 10, 5), dt.date(2026, 10, 6))
+    print(data)
+    # consult = ReadDB()
+    # metricas: pd.DataFrame = consult.get_collections()
+    # df: pd.DataFrame = consult.request_data("PrecBolsNaci", "Sistema", dt.date(2024, 12, 1), dt.date(2024, 12, 31))
+    # print(df.head())
